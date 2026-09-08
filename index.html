@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart-Movies</title>
+
+<style>
+:root{
+    --primary:#00bcd4;
+    --bg:#101010;
+    --card:#1b1b1b;
+    --hover:#242424;
+    --border:#303030;
+    --text:#fff;
+    --sub:#999;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Segoe UI,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+header{
+    text-align:center;
+    padding:35px 20px 20px;
+}
+
+header h1{
+    color:var(--primary);
+    font-size:40px;
+    margin-bottom:8px;
+}
+
+header p{
+    color:var(--sub);
+}
+
+.search{
+    width:min(1000px,92%);
+    margin:20px auto 35px;
+}
+
+.search input{
+    width:100%;
+    padding:15px 18px;
+    border:1px solid var(--border);
+    outline:none;
+    border-radius:14px;
+    background:var(--card);
+    color:white;
+    font-size:16px;
+}
+
+.search input:focus{
+    border-color:var(--primary);
+}
+
+.section{
+    width:min(1200px,94%);
+    margin:0 auto 45px;
+}
+
+.section h2{
+    color:var(--primary);
+    font-size:24px;
+    margin-bottom:18px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:18px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:transform .15s,background .15s,border-color .15s;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+    background:var(--hover);
+    border-color:var(--primary);
+}
+
+.preview{
+    width:100%;
+    aspect-ratio:16/9;
+    background:#000;
+    overflow:hidden;
+}
+
+.preview video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    pointer-events:none;
+}
+
+.info{
+    padding:14px;
+}
+
+.info h3{
+    font-size:16px;
+    line-height:1.35;
+    margin-bottom:6px;
+    word-break:break-word;
+}
+
+.info p{
+    font-size:13px;
+    color:var(--sub);
+}
+
+/* PLAYER */
+
+#player{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:rgba(0,0,0,.95);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.player-box{
+    width:min(1100px,100%);
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:18px;
+}
+
+.player-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.player-header h2{
+    color:var(--primary);
+    font-size:20px;
+    word-break:break-word;
+}
+
+.close{
+    border:0;
+    background:#444;
+    color:#fff;
+    border-radius:10px;
+    padding:10px 16px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+#mainVideo{
+    width:100%;
+    max-height:75vh;
+    background:#000;
+    border-radius:14px;
+    display:block;
+}
+
+.empty{
+    color:#666;
+    padding:10px 0;
+}
+
+#error{
+    width:min(1000px,92%);
+    margin:0 auto 30px;
+    text-align:center;
+    color:#f44336;
+    display:none;
+}
+
+@media(max-width:600px){
+
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+
+    .info{
+        padding:10px;
+    }
+
+    header h1{
+        font-size:32px;
+    }
+
+    .player-box{
+        padding:12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Smart-Movies</h1>
+    <p>Películas y series</p>
+</header>
+
+<div
+    id="error"
+></div>
+
+<div class="search">
+    <input
+        id="search"
+        type="text"
+        placeholder="Buscar..."
+        autocomplete="off"
+    >
+</div>
+
+
+<!-- SERIES -->
+
+<section class="section">
+
+    <h2>Series</h2>
+
+    <div
+        id="series"
+        class="grid"
+    ></div>
+
+    <div
+        id="seriesEmpty"
+        class="empty"
+    >
+        No hay series.
+    </div>
+
+</section>
+
+
+<!-- PELÍCULAS -->
+
+<section class="section">
+
+    <h2>Películas</h2>
+
+    <div
+        id="movies"
+        class="grid"
+    ></div>
+
+    <div
+        id="moviesEmpty"
+        class="empty"
+        style="display:none"
+    >
+        No hay películas.
+    </div>
+
+</section>
+
+
+<!-- PLAYER -->
+
+<div
+    id="player"
+    onclick="closePlayer()"
+>
+
+    <div
+        class="player-box"
+        onclick="event.stopPropagation()"
+    >
+
+        <div class="player-header">
+
+            <h2 id="playerTitle"></h2>
+
+            <button
+                class="close"
+                onclick="closePlayer()"
+            >
+                Cerrar
+            </button>
+
+        </div>
+
+        <video
+            id="mainVideo"
+            controls
+            playsinline
+        ></video>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/*
+=========================================================
+CONFIGURACIÓN
+=========================================================
+*/
+
+const KN_FOUNDATION_URL =
+    "https://smartium25.github.io/auth";
+
+/*
+ * URL pública de la API central de Kn Foundation.
+ * Sustituye esta URL por tu túnel actual si cambió.
+ */
+const KN_FOUNDATION_API =
+    "https://bar-cotton-four-still.trycloudflare.com";
+
+const TOKEN_KEY =
+    "knfoundation_token";
+
+
+/*
+=========================================================
+TOKEN
+=========================================================
+*/
+
+let token =
+    localStorage.getItem(TOKEN_KEY);
+
+
+/*
+=========================================================
+REDIRECCIÓN AL LOGIN
+=========================================================
+*/
+
+function redirectToKnFoundation(){
+
+    const currentUrl =
+        window.location.href;
+
+    const redirectUrl =
+        `${KN_FOUNDATION_URL}/?redirect=${encodeURIComponent(currentUrl)}`;
+
+    window.location.replace(
+        redirectUrl
+    );
+}
+
+
+/*
+=========================================================
+VERIFICAR SESIÓN
+=========================================================
+*/
+
+async function verifyLogin(){
+
+    if(!token){
+
+        redirectToKnFoundation();
+
+        return false;
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `${KN_FOUNDATION_API}/api/me`,
+                {
+                    method:"GET",
+
+                    headers:{
+                        "Authorization":
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+
+        if(
+            response.status === 401 ||
+            response.status === 403
+        ){
+
+            localStorage.removeItem(
+                TOKEN_KEY
+            );
+
+            token = null;
+
+            redirectToKnFoundation();
+
+            return false;
+        }
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "No se pudo verificar la sesión."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !data.user &&
+            !data.username
+        ){
+
+            throw new Error(
+                "Respuesta de autenticación inválida."
+            );
+        }
+
+
+        return true;
+
+
+    }catch(error){
+
+        console.error(
+            "Error verificando sesión:",
+            error
+        );
+
+
+        showError(
+            "No se pudo conectar con Kn Foundation."
+        );
+
+
+        return false;
+    }
+}
+
+
+/*
+=========================================================
+MOSTRAR ERROR
+=========================================================
+*/
+
+function showError(message){
+
+    const error =
+        document.getElementById(
+            "error"
+        );
+
+    error.textContent =
+        message;
+
+    error.style.display =
+        "block";
+}
+
+
+/*
+=========================================================
+ARCHIVOS
+=========================================================
+*/
+
+const videos = [
+
+    "Día 1, Videos Sentimentales.mp4",
+
+    "Día 2, Videos Sentimentales.mp4",
+
+    "Día 3, Videos Sentimentales.mp4",
+
+    "Día 4, Videos Sentimentales.mp4",
+
+    "Día 5, Videos sentimentales- El regresar de la Familia Peluche.mp4",
+
+    "Día 6, Videos Sentimentales- El Regreso De la Familia Peluche.mp4",
+
+    "Día 7, Videos Sentimentales- El Regresar De la Familia Peluche .mp4",
+
+    "Día 8, Videos Sentimentales- El regreso de la Familia Peluche.mp4",
+
+    "Día 9, Videos Sentimentales- El Regresar De la Familia Peluche.mp4",
+
+    "French Toast y pepito the movie.mp4",
+
+    "pepitothemovie.mp4"
+
+];
+
+
+/*
+=========================================================
+NOMBRE SIN .MP4
+=========================================================
+*/
+
+function displayName(file){
+
+    return file.replace(
+        /\.mp4$/i,
+        ""
+    );
+
+}
+
+
+/*
+=========================================================
+CLASIFICACIÓN
+=========================================================
+
+Todo archivo que empieza con D = Serie.
+Todo lo demás = Película.
+
+=========================================================
+*/
+
+function isSeries(file){
+
+    return file.charAt(0).toUpperCase() === "D";
+
+}
+
+
+/*
+=========================================================
+URL DEL VIDEO
+=========================================================
+*/
+
+function videoURL(file){
+
+    return encodeURI(file);
+
+}
+
+
+/*
+=========================================================
+CREAR TARJETA
+=========================================================
+*/
+
+function createCard(file){
+
+    const card =
+        document.createElement("div");
+
+    card.className =
+        "card";
+
+
+    const preview =
+        document.createElement("div");
+
+    preview.className =
+        "preview";
+
+
+    const video =
+        document.createElement("video");
+
+    video.src =
+        videoURL(file);
+
+    video.preload =
+        "metadata";
+
+    video.muted =
+        true;
+
+    video.playsInline =
+        true;
+
+    video.controls =
+        false;
+
+
+    preview.appendChild(
+        video
+    );
+
+
+    const info =
+        document.createElement("div");
+
+    info.className =
+        "info";
+
+
+    const title =
+        document.createElement("h3");
+
+    title.textContent =
+        displayName(file);
+
+
+    const type =
+        document.createElement("p");
+
+    type.textContent =
+        isSeries(file)
+        ? "Serie"
+        : "Película";
+
+
+    info.appendChild(
+        title
+    );
+
+    info.appendChild(
+        type
+    );
+
+
+    card.appendChild(
+        preview
+    );
+
+    card.appendChild(
+        info
+    );
+
+
+    card.addEventListener(
+        "click",
+        function(){
+
+            openPlayer(file);
+
+        }
+    );
+
+
+    return card;
+}
+
+
+/*
+=========================================================
+MOSTRAR TODO
+=========================================================
+*/
+
+function render(){
+
+    const series =
+        document.getElementById(
+            "series"
+        );
+
+    const movies =
+        document.getElementById(
+            "movies"
+        );
+
+    const seriesEmpty =
+        document.getElementById(
+            "seriesEmpty"
+        );
+
+    const moviesEmpty =
+        document.getElementById(
+            "moviesEmpty"
+        );
+
+    const search =
+        document.getElementById(
+            "search"
+        );
+
+    const query =
+        search.value
+            .trim()
+            .toLowerCase();
+
+
+    series.innerHTML = "";
+    movies.innerHTML = "";
+
+
+    let seriesCount = 0;
+    let movieCount = 0;
+
+
+    videos.forEach(
+        function(file){
+
+            const name =
+                displayName(file)
+                    .toLowerCase();
+
+
+            if(
+                query &&
+                !name.includes(query)
+            ){
+                return;
+            }
+
+
+            const card =
+                createCard(file);
+
+
+            if(
+                isSeries(file)
+            ){
+
+                series.appendChild(
+                    card
+                );
+
+                seriesCount++;
+
+            }else{
+
+                movies.appendChild(
+                    card
+                );
+
+                movieCount++;
+
+            }
+
+        }
+    );
+
+
+    seriesEmpty.style.display =
+        seriesCount === 0
+        ? "block"
+        : "none";
+
+
+    moviesEmpty.style.display =
+        movieCount === 0
+        ? "block"
+        : "none";
+
+}
+
+
+/*
+=========================================================
+ABRIR VIDEO
+=========================================================
+*/
+
+function openPlayer(file){
+
+    const player =
+        document.getElementById(
+            "mainVideo"
+        );
+
+    const overlay =
+        document.getElementById(
+            "player"
+        );
+
+    const title =
+        document.getElementById(
+            "playerTitle"
+        );
+
+
+    title.textContent =
+        displayName(file);
+
+
+    player.src =
+        videoURL(file);
+
+
+    overlay.style.display =
+        "flex";
+
+
+    player.play().catch(
+        function(){}
+    );
+
+}
+
+
+/*
+=========================================================
+CERRAR VIDEO
+=========================================================
+*/
+
+function closePlayer(){
+
+    const overlay =
+        document.getElementById(
+            "player"
+        );
+
+    const player =
+        document.getElementById(
+            "mainVideo"
+        );
+
+
+    player.pause();
+
+    player.removeAttribute(
+        "src"
+    );
+
+    player.load();
+
+
+    overlay.style.display =
+        "none";
+
+}
+
+
+/*
+=========================================================
+BUSCADOR
+=========================================================
+*/
+
+document
+    .getElementById("search")
+    .addEventListener(
+        "input",
+        render
+    );
+
+
+/*
+=========================================================
+ESC
+=========================================================
+*/
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Escape"
+        ){
+
+            closePlayer();
+
+        }
+
+    }
+);
+
+
+/*
+=========================================================
+INICIO
+=========================================================
+*/
+
+async function init(){
+
+    const authenticated =
+        await verifyLogin();
+
+
+    if(!authenticated){
+        return;
+    }
+
+
+    render();
+}
+
+
+init();
+
+</script>
+
+</body>
+</html>
