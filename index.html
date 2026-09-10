@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart-Movies</title>
+
+<style>
+:root{
+    --primary:#00bcd4;
+    --bg:#101010;
+    --card:#1b1b1b;
+    --hover:#242424;
+    --border:#303030;
+    --text:#fff;
+    --sub:#999;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Segoe UI,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+header{
+    padding:32px 5% 18px;
+}
+
+.header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-icon{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#1b1b1b;
+    border:1px solid var(--border);
+
+    color:var(--primary);
+
+    font-size:17px;
+    font-weight:800;
+}
+
+.brand-text h1{
+    color:var(--primary);
+    font-size:30px;
+    line-height:1.1;
+}
+
+.brand-text p{
+    color:var(--sub);
+    font-size:12px;
+    margin-top:3px;
+}
+
+.account-badge{
+    background:#191919;
+    border:1px solid var(--border);
+    border-radius:999px;
+    color:#aaa;
+    padding:7px 11px;
+    font-size:11px;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero{
+    position:relative;
+
+    width:90%;
+    max-width:1400px;
+    height:370px;
+
+    margin:8px auto 27px;
+
+    overflow:hidden;
+
+    border:1px solid var(--border);
+    border-radius:22px;
+
+    background:#111;
+}
+
+.hero-banner{
+    position:absolute;
+    inset:0;
+}
+
+.hero-banner img{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    display:block;
+
+    opacity:1;
+
+    transition:opacity .35s ease;
+}
+
+.hero::after{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.90) 0%,
+            rgba(0,0,0,.64) 38%,
+            rgba(0,0,0,.20) 76%,
+            rgba(0,0,0,.05) 100%
+        );
+
+    z-index:1;
+}
+
+.hero-content{
+    position:absolute;
+
+    left:38px;
+    bottom:40px;
+
+    z-index:2;
+
+    max-width:680px;
+}
+
+.hero-tag{
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    background:#242424;
+    border:1px solid #3a3a3a;
+
+    color:var(--primary);
+
+    font-size:11px;
+    font-weight:700;
+
+    margin-bottom:12px;
+}
+
+.hero-title{
+    font-size:39px;
+    line-height:1.12;
+
+    margin-bottom:10px;
+}
+
+.hero-description{
+    max-width:620px;
+
+    color:#bbb;
+
+    font-size:14px;
+    line-height:1.6;
+}
+
+.hero-meta{
+    display:flex;
+
+    gap:8px;
+    flex-wrap:wrap;
+
+    margin-top:15px;
+}
+
+.hero-meta span{
+    padding:6px 9px;
+
+    border-radius:999px;
+
+    background:#181818;
+    border:1px solid #363636;
+
+    color:#aaa;
+
+    font-size:10px;
+}
+
+.hero-arrow{
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    z-index:3;
+
+    width:39px;
+    height:39px;
+
+    border-radius:50%;
+
+    border:1px solid #444;
+
+    background:rgba(20,20,20,.78);
+
+    color:#fff;
+
+    font-size:27px;
+    line-height:1;
+
+    cursor:pointer;
+}
+
+.hero-arrow:hover{
+    background:rgba(45,45,45,.92);
+}
+
+.hero-prev{
+    left:14px;
+}
+
+.hero-next{
+    right:14px;
+}
+
+.hero-dots{
+    position:absolute;
+
+    z-index:3;
+
+    right:24px;
+    bottom:20px;
+
+    display:flex;
+
+    gap:6px;
+}
+
+.hero-dot{
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:#777;
+
+    cursor:pointer;
+}
+
+.hero-dot.active{
+    background:var(--primary);
+}
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.search{
+    width:90%;
+    max-width:1400px;
+
+    margin:0 auto 32px;
+}
+
+.search input{
+    width:100%;
+
+    padding:15px 18px;
+
+    border:1px solid var(--border);
+    border-radius:13px;
+
+    outline:none;
+
+    background:var(--card);
+
+    color:#fff;
+
+    font-size:15px;
+}
+
+.search input:focus{
+    border-color:var(--primary);
+}
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.section{
+    width:90%;
+    max-width:1400px;
+
+    margin:0 auto 42px;
+}
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+
+    gap:12px;
+
+    margin-bottom:15px;
+}
+
+.section-header h2{
+    color:var(--primary);
+
+    font-size:23px;
+}
+
+.section-header span{
+    color:#666;
+
+    font-size:11px;
+}
+
+.grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(230px,1fr)
+        );
+
+    gap:17px;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card{
+    overflow:hidden;
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    transition:
+        transform .15s,
+        background .15s,
+        border-color .15s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+
+    background:var(--hover);
+
+    border-color:var(--primary);
+}
+
+.preview{
+    position:relative;
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    overflow:hidden;
+
+    background:#000;
+}
+
+.preview video{
+    width:100%;
+    height:100%;
+
+    display:block;
+
+    object-fit:cover;
+
+    pointer-events:none;
+}
+
+.type-badge{
+    position:absolute;
+
+    top:9px;
+    left:9px;
+
+    padding:5px 7px;
+
+    border-radius:6px;
+
+    background:rgba(0,0,0,.72);
+
+    border:1px solid rgba(255,255,255,.1);
+
+    color:#ddd;
+
+    font-size:8px;
+    font-weight:700;
+}
+
+.info{
+    padding:13px;
+}
+
+.info h3{
+    font-size:16px;
+    font-weight:600;
+
+    line-height:1.3;
+
+    margin-bottom:5px;
+}
+
+.description{
+    color:var(--sub);
+
+    font-size:12px;
+
+    line-height:1.45;
+
+    display:-webkit-box;
+
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+
+    overflow:hidden;
+}
+
+.card-meta{
+    margin-top:9px;
+
+    color:#666;
+
+    font-size:9px;
+}
+
+.empty{
+    color:#666;
+    padding:10px 0;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+#error{
+    display:none;
+
+    width:90%;
+    max-width:1000px;
+
+    margin:0 auto 24px;
+
+    padding:10px 13px;
+
+    background:#241414;
+
+    border:1px solid #6e2525;
+
+    border-radius:9px;
+
+    color:#ff7d7d;
+
+    font-size:12px;
+}
+
+/* =========================================================
+   PLAYER
+   ========================================================= */
+
+#player{
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:1000;
+
+    background:rgba(0,0,0,.95);
+
+    align-items:center;
+    justify-content:center;
+
+    padding:18px;
+}
+
+.player-box{
+    width:min(1120px,100%);
+
+    max-height:94vh;
+
+    overflow:auto;
+
+    background:#171717;
+
+    border:1px solid var(--border);
+
+    border-radius:20px;
+
+    padding:18px;
+}
+
+.player-header{
+    display:flex;
+
+    align-items:flex-start;
+    justify-content:space-between;
+
+    gap:15px;
+
+    margin-bottom:14px;
+}
+
+.player-info{
+    min-width:0;
+}
+
+.player-type{
+    color:var(--primary);
+
+    font-size:9px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    margin-bottom:5px;
+}
+
+.player-header h2{
+    color:#fff;
+
+    font-size:23px;
+
+    line-height:1.25;
+
+    margin-bottom:7px;
+}
+
+.player-description{
+    max-width:800px;
+
+    color:#999;
+
+    font-size:13px;
+
+    line-height:1.5;
+}
+
+.close{
+    flex-shrink:0;
+
+    padding:9px 13px;
+
+    border:0;
+
+    border-radius:9px;
+
+    background:#3d3d3d;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+.close:hover{
+    background:#4b4b4b;
+}
+
+#mainVideo{
+    width:100%;
+
+    max-height:68vh;
+
+    display:block;
+
+    background:#000;
+
+    border-radius:12px;
+}
+
+.player-meta{
+    display:flex;
+
+    gap:8px;
+    flex-wrap:wrap;
+
+    margin-top:13px;
+}
+
+.player-meta span{
+    padding:6px 8px;
+
+    border-radius:999px;
+
+    background:#222;
+
+    border:1px solid #333;
+
+    color:#999;
+
+    font-size:9px;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:700px){
+
+    header{
+        padding:23px 5% 15px;
+    }
+
+    .brand-text h1{
+        font-size:25px;
+    }
+
+    .account-badge{
+        display:none;
+    }
+
+    .hero{
+        height:285px;
+    }
+
+    .hero-content{
+        left:25px;
+        bottom:28px;
+
+        max-width:
+            calc(100% - 50px);
+    }
+
+    .hero-title{
+        font-size:29px;
+    }
+
+    .hero-description{
+        font-size:12px;
+    }
+
+    .grid{
+        grid-template-columns:
+            repeat(2,1fr);
+
+        gap:11px;
+    }
+
+    .info{
+        padding:10px;
+    }
+
+    .info h3{
+        font-size:14px;
+    }
+
+    .description{
+        font-size:10px;
+    }
+
+    .player-box{
+        padding:11px;
+    }
+
+    .player-header h2{
+        font-size:19px;
+    }
+}
+
+@media(max-width:430px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .hero-title{
+        font-size:26px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="header-top">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                SM
+            </div>
+
+            <div class="brand-text">
+
+                <h1>
+                    Smart-Movies
+                </h1>
+
+                <p>
+                    Movies and series
+                </p>
+
+            </div>
+
+        </div>
+
+        <div
+            id="accountBadge"
+            class="account-badge"
+        >
+            Kn Foundation
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     HERO
+     ===================================================== -->
+
+<section
+    id="hero"
+    class="hero"
+>
+
+    <div class="hero-banner">
+
+        <img
+            id="heroBanner"
+            src="banner 1.jpg"
+            alt="Sentimental Videos"
+        >
+
+    </div>
+
+
+    <div class="hero-content">
+
+        <div
+            id="heroTag"
+            class="hero-tag"
+        >
+            Featured
+        </div>
+
+        <h2
+            id="heroTitle"
+            class="hero-title"
+        >
+            Sentimental Videos
+        </h2>
+
+        <p
+            id="heroDescription"
+            class="hero-description"
+        >
+            Follow the story through the Sentimental Videos series.
+        </p>
+
+        <div class="hero-meta">
+
+            <span id="heroType">
+                Series
+            </span>
+
+            <span id="heroCount">
+                0 titles
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <button
+        id="heroPrev"
+        class="hero-arrow hero-prev"
+        type="button"
+        aria-label="Previous banner"
+    >
+        ‹
+    </button>
+
+
+    <button
+        id="heroNext"
+        class="hero-arrow hero-next"
+        type="button"
+        aria-label="Next banner"
+    >
+        ›
+    </button>
+
+
+    <div
+        id="heroDots"
+        class="hero-dots"
+    ></div>
+
+</section>
+
+
+<!-- =====================================================
+     ERROR
+     ===================================================== -->
+
+<div id="error"></div>
+
+
+<!-- =====================================================
+     SEARCH
+     ===================================================== -->
+
+<div class="search">
+
+    <input
+        id="search"
+        type="text"
+        placeholder="Search movies and series..."
+        autocomplete="off"
+    >
+
+</div>
+
+
+<!-- =====================================================
+     SERIES
+     ===================================================== -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <h2>
+            Series
+        </h2>
+
+        <span id="seriesCount">
+            0 titles
+        </span>
+
+    </div>
+
+    <div
+        id="series"
+        class="grid"
+    ></div>
+
+    <div
+        id="seriesEmpty"
+        class="empty"
+    >
+        No series.
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MOVIES
+     ===================================================== -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <h2>
+            Movies
+        </h2>
+
+        <span id="moviesCount">
+            0 titles
+        </span>
+
+    </div>
+
+    <div
+        id="movies"
+        class="grid"
+    ></div>
+
+    <div
+        id="moviesEmpty"
+        class="empty"
+        style="display:none"
+    >
+        No movies.
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PLAYER
+     ===================================================== -->
+
+<div id="player">
+
+    <div class="player-box">
+
+        <div class="player-header">
+
+            <div class="player-info">
+
+                <div
+                    id="playerType"
+                    class="player-type"
+                >
+                    Movie
+                </div>
+
+                <h2 id="playerTitle"></h2>
+
+                <p
+                    id="playerDescription"
+                    class="player-description"
+                ></p>
+
+            </div>
+
+
+            <button
+                id="closePlayer"
+                class="close"
+                type="button"
+            >
+                Close
+            </button>
+
+        </div>
+
+
+        <video
+            id="mainVideo"
+            controls
+            playsinline
+        ></video>
+
+
+        <div class="player-meta">
+
+            <span id="playerMetaType">
+                Movie
+            </span>
+
+            <span>
+                Smart-Movies
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   CONFIG
+   ========================================================= */
+
+const KN_FOUNDATION_URL =
+    "https://smartium25.github.io/auth";
+
+const KN_FOUNDATION_API =
+    "https://programs-sweet-limited-files.trycloudflare.com";
+
+const TOKEN_KEY =
+    "knfoundation_token";
+
+
+/* =========================================================
+   TOKEN
+   ========================================================= */
+
+let token =
+    localStorage.getItem(
+        TOKEN_KEY
+    );
+
+
+/* =========================================================
+   VIDEOS
+   =========================================================
+
+   file:
+       nombre real del archivo
+
+   title:
+       nombre mostrado
+
+   description:
+       descripción mostrada
+
+   type:
+       movie / series
+   ========================================================= */
+
+const videos = [
+
+    {
+        file:
+            "Día 1, Videos Sentimentales.mp4",
+
+        title:
+            "Day 1",
+
+        description:
+            "The first chapter of the Sentimental Videos series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "Día 2, Videos Sentimentales.mp4",
+
+        title:
+            "Day 2",
+
+        description:
+            "The second chapter of the Sentimental Videos series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "Día 3, Videos Sentimentales.mp4",
+
+        title:
+            "Day 3",
+
+        description:
+            "The third chapter of the Sentimental Videos series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "Día 4, Videos Sentimentales.mp4",
+
+        title:
+            "Day 4",
+
+        description:
+            "The fourth chapter of the Sentimental Videos series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "Día 5, Videos sentimentales- El regresar de la Familia Peluche.mp4",
+
+        title:
+            "The Return of La Familia Peluche — Day 5",
+
+        description:
+            "The fifth chapter of the series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "Día 6, Videos Sentimentales- El Regreso De la Familia Peluche.mp4",
+
+        title:
+            "The Return of La Familia Peluche — Day 6",
+
+        description:
+            "The sixth chapter of the series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "Día 7, Videos Sentimentales- El Regresar De la Familia Peluche .mp4",
+
+        title:
+            "The Return of La Familia Peluche — Day 7",
+
+        description:
+            "The seventh chapter of the series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "Día 8, Videos Sentimentales- El regreso de la Familia Peluche.mp4",
+
+        title:
+            "The Return of La Familia Peluche — Day 8",
+
+        description:
+            "The eighth chapter of the series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "Día 9, Videos Sentimentales- El Regresar De la Familia Peluche.mp4",
+
+        title:
+            "The Return of La Familia Peluche — Day 9",
+
+        description:
+            "The ninth chapter of the series.",
+
+        type:
+            "series"
+    },
+
+
+    {
+        file:
+            "French Toast y pepito the movie.mp4",
+
+        title:
+            "French Toast and Pepito",
+
+        description:
+            "French Toast and Pepito team up for a new adventure.",
+
+        type:
+            "movie"
+    },
+
+
+    {
+        file:
+            "pepitothemovie.mp4",
+
+        title:
+            "Pepito: The Movie",
+
+        description:
+            "A new adventure starring Pepito.",
+
+        type:
+            "movie"
+    }
+
+];
+
+
+/* =========================================================
+   BANNERS
+   ========================================================= */
+
+const banners = [
+
+    {
+        image:
+            "banner 1.jpg",
+
+        title:
+            "Sentimental Videos",
+
+        description:
+            "Follow the story through the Sentimental Videos series.",
+
+        type:
+            "Series"
+    },
+
+
+    {
+        image:
+            "banner 2.jpg",
+
+        title:
+            "Pepito: The Movie 2",
+
+        description:
+            "Pepito returns for a brand-new adventure.",
+
+        type:
+            "Movie"
+    },
+
+
+    {
+        image:
+            "banner 3.jpg",
+
+        title:
+            "Pepito and French Toast",
+
+        description:
+            "Pepito and French Toast team up for a new adventure.",
+
+        type:
+            "Movie"
+    }
+
+];
+
+
+let currentBanner =
+    0;
+
+
+/* =========================================================
+   REDIRECCIÓN
+   ========================================================= */
+
+function redirectToKnFoundation(){
+
+    const currentURL =
+        window.location.href;
+
+
+    const url =
+        KN_FOUNDATION_URL +
+        "?redirect=" +
+        encodeURIComponent(
+            currentURL
+        );
+
+
+    window.location.replace(
+        url
+    );
+}
+
+
+/* =========================================================
+   VERIFICAR SESIÓN
+   ========================================================= */
+
+async function verifyLogin(){
+
+    if(!token){
+
+        redirectToKnFoundation();
+
+        return false;
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                KN_FOUNDATION_API +
+                "/api/me",
+                {
+                    method:"GET",
+
+                    headers:{
+                        "Authorization":
+                            "Bearer " +
+                            token
+                    }
+                }
+            );
+
+
+        if(
+            response.status === 401 ||
+            response.status === 403
+        ){
+
+            localStorage.removeItem(
+                TOKEN_KEY
+            );
+
+            token =
+                null;
+
+            redirectToKnFoundation();
+
+            return false;
+        }
+
+
+        if(
+            !response.ok
+        ){
+
+            throw new Error(
+                "Could not verify session."
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !data.user
+        ){
+
+            throw new Error(
+                "Invalid authentication response."
+            );
+        }
+
+
+        document.getElementById(
+            "accountBadge"
+        ).textContent =
+            "@" +
+            (
+                data.user.username ||
+                "Kn Foundation"
+            );
+
+
+        return true;
+
+
+    }catch(error){
+
+        console.error(
+            "Session error:",
+            error
+        );
+
+
+        showError(
+            "Could not connect to Kn Foundation."
+        );
+
+
+        return false;
+    }
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+function showError(
+    message
+){
+
+    const element =
+        document.getElementById(
+            "error"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.style.display =
+        "block";
+}
+
+
+/* =========================================================
+   TYPE
+   ========================================================= */
+
+function typeName(
+    type
+){
+
+    return type === "series"
+        ? "Series"
+        : "Movie";
+}
+
+
+/* =========================================================
+   VIDEO URL
+   ========================================================= */
+
+function videoURL(
+    file
+){
+
+    return encodeURI(
+        file
+    );
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+function createCard(
+    item
+){
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+
+    card.className =
+        "card";
+
+
+    const preview =
+        document.createElement(
+            "div"
+        );
+
+
+    preview.className =
+        "preview";
+
+
+    const video =
+        document.createElement(
+            "video"
+        );
+
+
+    video.src =
+        videoURL(
+            item.file
+        );
+
+
+    video.preload =
+        "metadata";
+
+
+    video.muted =
+        true;
+
+
+    video.playsInline =
+        true;
+
+
+    video.controls =
+        false;
+
+
+    const badge =
+        document.createElement(
+            "div"
+        );
+
+
+    badge.className =
+        "type-badge";
+
+
+    badge.textContent =
+        typeName(
+            item.type
+        );
+
+
+    preview.appendChild(
+        video
+    );
+
+
+    preview.appendChild(
+        badge
+    );
+
+
+    const info =
+        document.createElement(
+            "div"
+        );
+
+
+    info.className =
+        "info";
+
+
+    const title =
+        document.createElement(
+            "h3"
+        );
+
+
+    title.textContent =
+        item.title;
+
+
+    const description =
+        document.createElement(
+            "p"
+        );
+
+
+    description.className =
+        "description";
+
+
+    description.textContent =
+        item.description;
+
+
+    const meta =
+        document.createElement(
+            "div"
+        );
+
+
+    meta.className =
+        "card-meta";
+
+
+    meta.textContent =
+        typeName(
+            item.type
+        );
+
+
+    info.appendChild(
+        title
+    );
+
+
+    info.appendChild(
+        description
+    );
+
+
+    info.appendChild(
+        meta
+    );
+
+
+    card.appendChild(
+        preview
+    );
+
+
+    card.appendChild(
+        info
+    );
+
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            openPlayer(
+                item
+            );
+
+        }
+    );
+
+
+    return card;
+}
+
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+
+function render(){
+
+    const series =
+        document.getElementById(
+            "series"
+        );
+
+
+    const movies =
+        document.getElementById(
+            "movies"
+        );
+
+
+    const seriesEmpty =
+        document.getElementById(
+            "seriesEmpty"
+        );
+
+
+    const moviesEmpty =
+        document.getElementById(
+            "moviesEmpty"
+        );
+
+
+    const query =
+        document
+            .getElementById(
+                "search"
+            )
+            .value
+            .trim()
+            .toLowerCase();
+
+
+    series.innerHTML =
+        "";
+
+
+    movies.innerHTML =
+        "";
+
+
+    let seriesCount =
+        0;
+
+
+    let movieCount =
+        0;
+
+
+    videos.forEach(
+        item => {
+
+            const searchable =
+                (
+                    item.title +
+                    " " +
+                    item.description
+                )
+                .toLowerCase();
+
+
+            if(
+                query &&
+                !searchable.includes(
+                    query
+                )
+            ){
+
+                return;
+            }
+
+
+            const card =
+                createCard(
+                    item
+                );
+
+
+            if(
+                item.type ===
+                "series"
+            ){
+
+                series.appendChild(
+                    card
+                );
+
+                seriesCount++;
+
+            }else{
+
+                movies.appendChild(
+                    card
+                );
+
+                movieCount++;
+            }
+
+        }
+    );
+
+
+    seriesEmpty.style.display =
+        seriesCount === 0
+            ? "block"
+            : "none";
+
+
+    moviesEmpty.style.display =
+        movieCount === 0
+            ? "block"
+            : "none";
+
+
+    document.getElementById(
+        "seriesCount"
+    ).textContent =
+        seriesCount +
+        (
+            seriesCount === 1
+                ? " title"
+                : " titles"
+        );
+
+
+    document.getElementById(
+        "moviesCount"
+    ).textContent =
+        movieCount +
+        (
+            movieCount === 1
+                ? " title"
+                : " titles"
+        );
+
+
+    const total =
+        seriesCount +
+        movieCount;
+
+
+    document.getElementById(
+        "heroCount"
+    ).textContent =
+        total +
+        (
+            total === 1
+                ? " title"
+                : " titles"
+        );
+}
+
+
+/* =========================================================
+   ACTUALIZAR HERO
+   ========================================================= */
+
+function updateHero(){
+
+    const item =
+        banners[
+            currentBanner
+        ];
+
+
+    const image =
+        document.getElementById(
+            "heroBanner"
+        );
+
+
+    image.style.opacity =
+        "0";
+
+
+    setTimeout(
+        () => {
+
+            image.src =
+                item.image;
+
+            image.alt =
+                item.title;
+
+
+            document.getElementById(
+                "heroTitle"
+            ).textContent =
+                item.title;
+
+
+            document.getElementById(
+                "heroDescription"
+            ).textContent =
+                item.description;
+
+
+            document.getElementById(
+                "heroType"
+            ).textContent =
+                item.type;
+
+
+            image.style.opacity =
+                "1";
+
+        },
+        150
+    );
+
+
+    const dots =
+        document.getElementById(
+            "heroDots"
+        );
+
+
+    dots.innerHTML =
+        "";
+
+
+    banners.forEach(
+        (_, index) => {
+
+            const dot =
+                document.createElement(
+                    "span"
+                );
+
+
+            dot.className =
+                "hero-dot" +
+                (
+                    index === currentBanner
+                        ? " active"
+                        : ""
+                );
+
+
+            dot.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    currentBanner =
+                        index;
+
+                    updateHero();
+
+                }
+            );
+
+
+            dots.appendChild(
+                dot
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   HERO ANTERIOR
+   ========================================================= */
+
+document.getElementById(
+    "heroPrev"
+).addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+
+        currentBanner =
+            (
+                currentBanner -
+                1 +
+                banners.length
+            ) %
+            banners.length;
+
+
+        updateHero();
+    }
+);
+
+
+/* =========================================================
+   HERO SIGUIENTE
+   ========================================================= */
+
+document.getElementById(
+    "heroNext"
+).addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+
+        currentBanner =
+            (
+                currentBanner +
+                1
+            ) %
+            banners.length;
+
+
+        updateHero();
+    }
+);
+
+
+/* =========================================================
+   CAMBIO AUTOMÁTICO
+   ========================================================= */
+
+setInterval(
+    () => {
+
+        currentBanner =
+            (
+                currentBanner +
+                1
+            ) %
+            banners.length;
+
+
+        updateHero();
+
+    },
+    5000
+);
+
+
+/* =========================================================
+   PLAYER
+   ========================================================= */
+
+function openPlayer(
+    item
+){
+
+    const overlay =
+        document.getElementById(
+            "player"
+        );
+
+
+    const video =
+        document.getElementById(
+            "mainVideo"
+        );
+
+
+    document.getElementById(
+        "playerTitle"
+    ).textContent =
+        item.title;
+
+
+    document.getElementById(
+        "playerDescription"
+    ).textContent =
+        item.description;
+
+
+    document.getElementById(
+        "playerType"
+    ).textContent =
+        typeName(
+            item.type
+        );
+
+
+    document.getElementById(
+        "playerMetaType"
+    ).textContent =
+        typeName(
+            item.type
+        );
+
+
+    video.src =
+        videoURL(
+            item.file
+        );
+
+
+    overlay.style.display =
+        "flex";
+
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    video.play().catch(
+        () => {}
+    );
+}
+
+
+/* =========================================================
+   CERRAR PLAYER
+   ========================================================= */
+
+function closePlayer(){
+
+    const overlay =
+        document.getElementById(
+            "player"
+        );
+
+
+    const video =
+        document.getElementById(
+            "mainVideo"
+        );
+
+
+    video.pause();
+
+
+    video.removeAttribute(
+        "src"
+    );
+
+
+    video.load();
+
+
+    overlay.style.display =
+        "none";
+
+
+    document.body.style.overflow =
+        "";
+}
+
+
+document.getElementById(
+    "closePlayer"
+).addEventListener(
+    "click",
+    closePlayer
+);
+
+
+/* =========================================================
+   CERRAR HACIENDO CLICK FUERA
+   ========================================================= */
+
+document.getElementById(
+    "player"
+).addEventListener(
+    "click",
+    event => {
+
+        if(
+            event.target ===
+            document.getElementById(
+                "player"
+            )
+        ){
+
+            closePlayer();
+        }
+    }
+);
+
+
+/* =========================================================
+   BUSCADOR
+   ========================================================= */
+
+document.getElementById(
+    "search"
+).addEventListener(
+    "input",
+    render
+);
+
+
+/* =========================================================
+   ESC
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key ===
+            "Escape"
+        ){
+
+            closePlayer();
+        }
+    }
+);
+
+
+/* =========================================================
+   INICIO
+   ========================================================= */
+
+async function init(){
+
+    const authenticated =
+        await verifyLogin();
+
+
+    if(
+        !authenticated
+    ){
+
+        return;
+    }
+
+
+    updateHero();
+
+    render();
+}
+
+
+init();
+
+</script>
+
+</body>
+</html>
