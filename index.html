@@ -17,6 +17,7 @@
     --text:#ffffff;
     --muted:#aaaaaa;
     --border:#333333;
+    --danger:#ff5555;
     --shadow:0 10px 30px rgba(0,0,0,.35);
 }
 
@@ -113,13 +114,116 @@ button{
     font-size:12px;
 }
 
-.account{
-    color:var(--cyan2);
-    font-weight:700;
+/* ACCOUNT */
+
+.account-area{
+    position:relative;
+}
+
+.account-button{
+    display:flex;
+    align-items:center;
+    gap:10px;
     border:1px solid #345;
     background:#171717;
+    color:white;
     border-radius:18px;
-    padding:9px 14px;
+    padding:8px 12px;
+    transition:.2s;
+}
+
+.account-button:hover{
+    border-color:var(--cyan);
+}
+
+.account-avatar{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#282828;
+    border:1px solid #444;
+    display:none;
+}
+
+.account-default-avatar{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#252525;
+    border:1px solid #444;
+    color:var(--cyan2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+}
+
+.account-name{
+    color:var(--cyan2);
+    font-weight:700;
+    max-width:180px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.account-arrow{
+    color:#888;
+    font-size:12px;
+}
+
+.account-menu{
+    position:absolute;
+    right:0;
+    top:calc(100% + 10px);
+    width:220px;
+    background:#1b1b1b;
+    border:1px solid #3a3a3a;
+    border-radius:18px;
+    padding:8px;
+    box-shadow:var(--shadow);
+    display:none;
+}
+
+.account-menu.open{
+    display:block;
+}
+
+.account-menu-user{
+    padding:12px;
+    border-bottom:1px solid #333;
+    margin-bottom:6px;
+}
+
+.account-menu-username{
+    font-weight:800;
+    color:white;
+}
+
+.account-menu-email{
+    margin-top:4px;
+    color:#888;
+    font-size:12px;
+    word-break:break-word;
+}
+
+.account-option{
+    width:100%;
+    border:0;
+    background:transparent;
+    color:#ddd;
+    text-align:left;
+    padding:11px 12px;
+    border-radius:12px;
+}
+
+.account-option:hover{
+    background:#282828;
+}
+
+.account-option.danger{
+    color:#ff7777;
 }
 
 /* HERO */
@@ -204,52 +308,6 @@ button{
     border-radius:16px;
     color:#ddd;
     font-size:13px;
-}
-
-.hero-controls{
-    position:absolute;
-    z-index:5;
-    right:28px;
-    bottom:28px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.hero-btn{
-    width:44px;
-    height:44px;
-    border:1px solid #555;
-    background:rgba(0,0,0,.62);
-    color:white;
-    border-radius:50%;
-    transition:.2s;
-}
-
-.hero-btn:hover{
-    border-color:var(--cyan);
-    color:var(--cyan2);
-    transform:scale(1.05);
-}
-
-.hero-dots{
-    display:flex;
-    gap:7px;
-    align-items:center;
-}
-
-.hero-dot{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:#666;
-    transition:.2s;
-}
-
-.hero-dot.active{
-    width:24px;
-    border-radius:8px;
-    background:var(--cyan);
 }
 
 /* SEARCH */
@@ -485,6 +543,7 @@ button{
 /* RESPONSIVE */
 
 @media(max-width:800px){
+
     .header{
         padding:0 16px;
     }
@@ -524,9 +583,14 @@ button{
     .card-preview{
         height:120px;
     }
+
+    .account-name{
+        max-width:110px;
+    }
 }
 
 @media(max-width:520px){
+
     .header{
         height:62px;
     }
@@ -542,9 +606,18 @@ button{
         font-size:15px;
     }
 
-    .account{
-        padding:7px 10px;
-        font-size:12px;
+    .account-button{
+        padding:6px 9px;
+    }
+
+    .account-default-avatar,
+    .account-avatar{
+        width:30px;
+        height:30px;
+    }
+
+    .account-name{
+        display:none;
     }
 
     .hero{
@@ -557,11 +630,6 @@ button{
 
     .hero-title{
         font-size:33px;
-    }
-
-    .hero-controls{
-        right:16px;
-        bottom:16px;
     }
 
     .grid{
@@ -577,11 +645,14 @@ button{
 
 <body>
 
-<div id="loading">Loading Smart-Movies...</div>
+<div id="loading">
+    Loading Smart-Movies...
+</div>
 
 <div id="app">
 
     <header class="header">
+
         <div class="brand">
             <div class="brand-mark">SM</div>
 
@@ -591,7 +662,83 @@ button{
             </div>
         </div>
 
-        <div class="account" id="accountName">@user</div>
+        <div class="account-area">
+
+            <button
+                class="account-button"
+                id="accountButton"
+                type="button"
+            >
+
+                <img
+                    id="accountAvatar"
+                    class="account-avatar"
+                    alt="Profile picture"
+                >
+
+                <div
+                    id="accountDefaultAvatar"
+                    class="account-default-avatar"
+                >
+                    U
+                </div>
+
+                <span
+                    id="accountName"
+                    class="account-name"
+                >
+                    @user
+                </span>
+
+                <span class="account-arrow">
+                    ▾
+                </span>
+
+            </button>
+
+            <div
+                id="accountMenu"
+                class="account-menu"
+            >
+
+                <div class="account-menu-user">
+
+                    <div
+                        id="menuUsername"
+                        class="account-menu-username"
+                    >
+                        @user
+                    </div>
+
+                    <div
+                        id="menuEmail"
+                        class="account-menu-email"
+                    >
+                        user@knfoundation.org
+                    </div>
+
+                </div>
+
+                <button
+                    id="accountSettings"
+                    class="account-option"
+                    type="button"
+                >
+                    Account
+                </button>
+
+                <button
+                    id="logoutButton"
+                    class="account-option danger"
+                    type="button"
+                >
+                    Sign out
+                </button>
+
+            </div>
+
+        </div>
+
     </header>
 
     <main>
@@ -609,50 +756,51 @@ button{
 
             <div class="hero-content">
 
-                <div class="hero-label" id="heroLabel">
+                <div
+                    class="hero-label"
+                    id="heroLabel"
+                >
                     Series
                 </div>
 
-                <h1 class="hero-title" id="heroTitle">
+                <h1
+                    class="hero-title"
+                    id="heroTitle"
+                >
                     Sentimental Videos
                 </h1>
 
-                <p class="hero-description" id="heroDescription">
+                <p
+                    class="hero-description"
+                    id="heroDescription"
+                >
                     Follow the story through the Sentimental Videos series.
                 </p>
 
                 <div class="hero-meta">
-                    <div class="hero-tag" id="heroType">Series</div>
-                    <div class="hero-tag" id="heroCount">3 featured titles</div>
+
+                    <div
+                        class="hero-tag"
+                        id="heroType"
+                    >
+                        Series
+                    </div>
+
+                    <div
+                        class="hero-tag"
+                        id="heroCount"
+                    >
+                        9 episodes
+                    </div>
+
                 </div>
-
-            </div>
-
-            <div class="hero-controls">
-
-                <button
-                    class="hero-btn"
-                    id="prevBanner"
-                    aria-label="Previous banner"
-                >
-                    ‹
-                </button>
-
-                <div class="hero-dots" id="heroDots"></div>
-
-                <button
-                    class="hero-btn"
-                    id="nextBanner"
-                    aria-label="Next banner"
-                >
-                    ›
-                </button>
 
             </div>
 
         </section>
 
         <div class="search-wrap">
+
             <input
                 id="searchInput"
                 class="search"
@@ -660,6 +808,7 @@ button{
                 placeholder="Search movies and series..."
                 autocomplete="off"
             >
+
         </div>
 
         <div class="content">
@@ -667,13 +816,27 @@ button{
             <section class="section">
 
                 <div class="section-head">
-                    <h2 class="section-title">Series</h2>
-                    <div class="section-count" id="seriesCount"></div>
+
+                    <h2 class="section-title">
+                        Series
+                    </h2>
+
+                    <div
+                        class="section-count"
+                        id="seriesCount"
+                    ></div>
+
                 </div>
 
-                <div class="grid" id="seriesGrid"></div>
+                <div
+                    class="grid"
+                    id="seriesGrid"
+                ></div>
 
-                <div class="empty" id="seriesEmpty">
+                <div
+                    class="empty"
+                    id="seriesEmpty"
+                >
                     No series found.
                 </div>
 
@@ -682,13 +845,27 @@ button{
             <section class="section">
 
                 <div class="section-head">
-                    <h2 class="section-title">Movies</h2>
-                    <div class="section-count" id="moviesCount"></div>
+
+                    <h2 class="section-title">
+                        Movies
+                    </h2>
+
+                    <div
+                        class="section-count"
+                        id="moviesCount"
+                    ></div>
+
                 </div>
 
-                <div class="grid" id="moviesGrid"></div>
+                <div
+                    class="grid"
+                    id="moviesGrid"
+                ></div>
 
-                <div class="empty" id="moviesEmpty">
+                <div
+                    class="empty"
+                    id="moviesEmpty"
+                >
                     No movies found.
                 </div>
 
@@ -697,9 +874,13 @@ button{
         </div>
 
     </main>
+
 </div>
 
-<div class="modal" id="playerModal">
+<div
+    class="modal"
+    id="playerModal"
+>
 
     <div class="player">
 
@@ -709,6 +890,7 @@ button{
                 class="close"
                 id="closePlayer"
                 aria-label="Close"
+                type="button"
             >
                 ×
             </button>
@@ -723,9 +905,15 @@ button{
 
         <div class="player-info">
 
-            <h2 class="player-title" id="playerTitle"></h2>
+            <h2
+                class="player-title"
+                id="playerTitle"
+            ></h2>
 
-            <p class="player-description" id="playerDescription"></p>
+            <p
+                class="player-description"
+                id="playerDescription"
+            ></p>
 
         </div>
 
@@ -733,7 +921,10 @@ button{
 
 </div>
 
-<div class="error" id="errorBox"></div>
+<div
+    class="error"
+    id="errorBox"
+></div>
 
 <script>
 /* =========================
@@ -749,6 +940,13 @@ const TOKEN_KEY =
 const AUTH_PAGE =
     "https://smartium25.github.io/auth";
 
+/*
+   Change this only if your Account Manager
+   uses a different public URL.
+*/
+const ACCOUNT_PAGE =
+    "https://smartium25.github.io/auth";
+
 /* =========================
    BANNERS
 ========================= */
@@ -759,21 +957,24 @@ const banners = [
         title: "Sentimental Videos",
         description:
             "Follow the story through the Sentimental Videos series.",
-        type: "Series"
+        type: "Series",
+        count: "9 episodes"
     },
     {
         image: "banner 2.JPG",
         title: "Pepito: The Movie 2",
         description:
             "Pepito returns for a brand-new adventure.",
-        type: "Movie"
+        type: "Movie",
+        count: "Featured movie"
     },
     {
         image: "banner 3.JPG",
         title: "Pepito and French Toast",
         description:
             "Pepito and French Toast team up for a new adventure.",
-        type: "Movie"
+        type: "Movie",
+        count: "Featured movie"
     }
 ];
 
@@ -782,6 +983,7 @@ const banners = [
 ========================= */
 
 const titles = [
+
     {
         file: "Día 1, Videos Sentimentales.mp4",
         title: "Day 1",
@@ -884,8 +1086,26 @@ const app =
 const errorBox =
     document.getElementById("errorBox");
 
+const accountButton =
+    document.getElementById("accountButton");
+
+const accountMenu =
+    document.getElementById("accountMenu");
+
 const accountName =
     document.getElementById("accountName");
+
+const accountAvatar =
+    document.getElementById("accountAvatar");
+
+const accountDefaultAvatar =
+    document.getElementById("accountDefaultAvatar");
+
+const menuUsername =
+    document.getElementById("menuUsername");
+
+const menuEmail =
+    document.getElementById("menuEmail");
 
 const heroImage =
     document.getElementById("heroImage");
@@ -904,9 +1124,6 @@ const heroType =
 
 const heroCount =
     document.getElementById("heroCount");
-
-const heroDots =
-    document.getElementById("heroDots");
 
 const seriesGrid =
     document.getElementById("seriesGrid");
@@ -948,13 +1165,125 @@ const playerDescription =
 function showError(message){
 
     errorBox.textContent = message;
-    errorBox.style.display = "block";
 
-    clearTimeout(showError.timer);
+    errorBox.style.display =
+        "block";
 
-    showError.timer = setTimeout(() => {
-        errorBox.style.display = "none";
-    }, 5000);
+    clearTimeout(
+        showError.timer
+    );
+
+    showError.timer =
+        setTimeout(() => {
+
+            errorBox.style.display =
+                "none";
+
+        }, 5000);
+}
+
+/* =========================
+   ACCOUNT
+========================= */
+
+let currentUser = null;
+
+function getPfpUrl(pfp){
+
+    if(!pfp){
+        return null;
+    }
+
+    if(
+        pfp.startsWith("http://") ||
+        pfp.startsWith("https://")
+    ){
+        return pfp;
+    }
+
+    if(
+        pfp.startsWith("/")
+    ){
+        return AUTH_API + pfp;
+    }
+
+    return AUTH_API + "/" + pfp;
+}
+
+function getInitial(username){
+
+    if(!username){
+        return "U";
+    }
+
+    return username
+        .trim()
+        .charAt(0)
+        .toUpperCase();
+}
+
+function updateAccountUI(user){
+
+    currentUser = user;
+
+    const username =
+        user.username ||
+        user.email?.split("@")[0] ||
+        "user";
+
+    const email =
+        user.email ||
+        username + "@knfoundation.org";
+
+    accountName.textContent =
+        "@" + username;
+
+    menuUsername.textContent =
+        "@" + username;
+
+    menuEmail.textContent =
+        email;
+
+    accountDefaultAvatar.textContent =
+        getInitial(username);
+
+    const pfp =
+        user.pfp ||
+        user.profile_picture ||
+        null;
+
+    const pfpUrl =
+        getPfpUrl(pfp);
+
+    if(pfpUrl){
+
+        accountAvatar.src =
+            pfpUrl;
+
+        accountAvatar.style.display =
+            "block";
+
+        accountDefaultAvatar.style.display =
+            "none";
+
+        accountAvatar.onerror =
+            () => {
+
+                accountAvatar.style.display =
+                    "none";
+
+                accountDefaultAvatar.style.display =
+                    "flex";
+            };
+
+    }else{
+
+        accountAvatar.style.display =
+            "none";
+
+        accountDefaultAvatar.style.display =
+            "flex";
+    }
 }
 
 /* =========================
@@ -969,6 +1298,7 @@ async function checkAuth(){
     if(!token){
 
         redirectToAuth();
+
         return false;
     }
 
@@ -988,7 +1318,9 @@ async function checkAuth(){
 
         if(!response.ok){
 
-            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(
+                TOKEN_KEY
+            );
 
             redirectToAuth();
 
@@ -998,13 +1330,7 @@ async function checkAuth(){
         const user =
             await response.json();
 
-        const username =
-            user.username ||
-            user.email?.split("@")[0] ||
-            "user";
-
-        accountName.textContent =
-            "@" + username;
+        updateAccountUI(user);
 
         return true;
 
@@ -1032,45 +1358,113 @@ function redirectToAuth(){
     const url =
         AUTH_PAGE +
         "?return=" +
-        encodeURIComponent(returnUrl);
+        encodeURIComponent(
+            returnUrl
+        );
 
-    window.location.href = url;
+    window.location.href =
+        url;
 }
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout(){
+
+    const token =
+        localStorage.getItem(
+            TOKEN_KEY
+        );
+
+    try{
+
+        if(token){
+
+            await fetch(
+                AUTH_API + "/api/logout",
+                {
+                    method:"POST",
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+        }
+
+    }catch(error){
+        /* Continue local logout anyway */
+    }
+
+    localStorage.removeItem(
+        TOKEN_KEY
+    );
+
+    window.location.href =
+        AUTH_PAGE +
+        "?return=" +
+        encodeURIComponent(
+            window.location.href
+        );
+}
+
+/* =========================
+   ACCOUNT MENU
+========================= */
+
+accountButton.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+        accountMenu.classList.toggle(
+            "open"
+        );
+    }
+);
+
+accountMenu.addEventListener(
+    "click",
+    event => {
+        event.stopPropagation();
+    }
+);
+
+document.addEventListener(
+    "click",
+    () => {
+
+        accountMenu.classList.remove(
+            "open"
+        );
+    }
+);
+
+document
+    .getElementById("logoutButton")
+    .addEventListener(
+        "click",
+        logout
+    );
+
+document
+    .getElementById("accountSettings")
+    .addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                ACCOUNT_PAGE;
+        }
+    );
 
 /* =========================
    BANNERS
 ========================= */
 
 let currentBanner = 0;
-
-function buildDots(){
-
-    heroDots.innerHTML = "";
-
-    banners.forEach((banner,index) => {
-
-        const dot =
-            document.createElement("div");
-
-        dot.className =
-            "hero-dot" +
-            (index === currentBanner
-                ? " active"
-                : "");
-
-        dot.addEventListener(
-            "click",
-            () => {
-
-                currentBanner = index;
-
-                renderBanner();
-            }
-        );
-
-        heroDots.appendChild(dot);
-    });
-}
 
 function renderBanner(){
 
@@ -1096,47 +1490,26 @@ function renderBanner(){
         banner.type;
 
     heroCount.textContent =
-        banner.type === "Series"
-            ? "9 episodes"
-            : "Featured movie";
-
-    buildDots();
+        banner.count;
 }
 
-function nextBanner(){
+/*
+   Banner changes automatically only.
+   There are no manual controls.
+*/
 
-    currentBanner =
-        (currentBanner + 1) %
-        banners.length;
-
-    renderBanner();
-}
-
-function previousBanner(){
-
-    currentBanner =
-        (currentBanner - 1 + banners.length) %
-        banners.length;
-
-    renderBanner();
-}
-
-document
-    .getElementById("nextBanner")
-    .addEventListener(
-        "click",
-        nextBanner
-    );
-
-document
-    .getElementById("prevBanner")
-    .addEventListener(
-        "click",
-        previousBanner
-    );
+renderBanner();
 
 setInterval(
-    nextBanner,
+    () => {
+
+        currentBanner =
+            (currentBanner + 1) %
+            banners.length;
+
+        renderBanner();
+
+    },
     5000
 );
 
@@ -1149,7 +1522,8 @@ function createCard(item){
     const card =
         document.createElement("article");
 
-    card.className = "card";
+    card.className =
+        "card";
 
     const preview =
         document.createElement("div");
@@ -1160,29 +1534,42 @@ function createCard(item){
     const video =
         document.createElement("video");
 
-    video.src = item.file;
-    video.muted = true;
-    video.preload = "metadata";
-    video.playsInline = true;
+    video.src =
+        item.file;
+
+    video.muted =
+        true;
+
+    video.preload =
+        "metadata";
+
+    video.playsInline =
+        true;
 
     video.addEventListener(
         "mouseenter",
         () => {
-            video.play().catch(() => {});
+
+            video.play()
+                .catch(() => {});
         }
     );
 
     video.addEventListener(
         "mouseleave",
         () => {
+
             video.pause();
-            video.currentTime = 0;
+
+            video.currentTime =
+                0;
         }
     );
 
     video.addEventListener(
         "error",
         () => {
+
             video.remove();
 
             const placeholder =
@@ -1197,8 +1584,11 @@ function createCard(item){
             preview.prepend(
                 placeholder
             );
+
         },
-        {once:true}
+        {
+            once:true
+        }
     );
 
     const type =
@@ -1212,8 +1602,13 @@ function createCard(item){
             ? "Series"
             : "Movie";
 
-    preview.appendChild(video);
-    preview.appendChild(type);
+    preview.appendChild(
+        video
+    );
+
+    preview.appendChild(
+        type
+    );
 
     const body =
         document.createElement("div");
@@ -1239,15 +1634,28 @@ function createCard(item){
     description.textContent =
         item.description;
 
-    body.appendChild(title);
-    body.appendChild(description);
+    body.appendChild(
+        title
+    );
 
-    card.appendChild(preview);
-    card.appendChild(body);
+    body.appendChild(
+        description
+    );
+
+    card.appendChild(
+        preview
+    );
+
+    card.appendChild(
+        body
+    );
 
     card.addEventListener(
         "click",
-        () => openPlayer(item)
+        () => {
+
+            openPlayer(item);
+        }
     );
 
     return card;
@@ -1271,7 +1679,9 @@ function renderTitles(){
                 item.title
                     .toLowerCase()
                     .includes(query)
+
                 ||
+
                 item.description
                     .toLowerCase()
                     .includes(query)
@@ -1280,30 +1690,39 @@ function renderTitles(){
 
     const series =
         filtered.filter(
-            item => item.type === "series"
+            item =>
+                item.type === "series"
         );
 
     const movies =
         filtered.filter(
-            item => item.type === "movie"
+            item =>
+                item.type === "movie"
         );
 
-    seriesGrid.innerHTML = "";
-    moviesGrid.innerHTML = "";
+    seriesGrid.innerHTML =
+        "";
 
-    series.forEach(item => {
+    moviesGrid.innerHTML =
+        "";
 
-        seriesGrid.appendChild(
-            createCard(item)
-        );
-    });
+    series.forEach(
+        item => {
 
-    movies.forEach(item => {
+            seriesGrid.appendChild(
+                createCard(item)
+            );
+        }
+    );
 
-        moviesGrid.appendChild(
-            createCard(item)
-        );
-    });
+    movies.forEach(
+        item => {
+
+            moviesGrid.appendChild(
+                createCard(item)
+            );
+        }
+    );
 
     seriesCount.textContent =
         `${series.length} title${series.length === 1 ? "" : "s"}`;
@@ -1346,7 +1765,8 @@ function openPlayer(item){
         "open"
     );
 
-    playerVideo.play().catch(() => {});
+    playerVideo.play()
+        .catch(() => {});
 }
 
 function closePlayer(){
@@ -1379,6 +1799,7 @@ playerModal.addEventListener(
             event.target ===
             playerModal
         ){
+
             closePlayer();
         }
     }
@@ -1391,6 +1812,10 @@ document.addEventListener(
         if(event.key === "Escape"){
 
             closePlayer();
+
+            accountMenu.classList.remove(
+                "open"
+            );
         }
     }
 );
@@ -1400,8 +1825,6 @@ document.addEventListener(
 ========================= */
 
 async function start(){
-
-    renderBanner();
 
     renderTitles();
 
