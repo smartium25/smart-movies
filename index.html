@@ -1353,13 +1353,12 @@ function redirectToAuth(){
 
     const url =
         AUTH_PAGE +
-        "?return=" +
-        encodeURIComponent(
-            returnUrl
-        );
+        "?redirect=" +
+        encodeURIComponent(returnUrl);
 
-    window.location.href =
-        url;
+    window.location.replace(
+        url
+    );
 }
 
 /* =========================
@@ -1398,11 +1397,11 @@ async function logout(){
     );
 
     window.location.href =
-        AUTH_PAGE +
-        "?return=" +
-        encodeURIComponent(
-            window.location.href
-        );
+    AUTH_PAGE +
+    "?redirect=" +
+    encodeURIComponent(
+        window.location.href
+    );
 }
 
 /* =========================
