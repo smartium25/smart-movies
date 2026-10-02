@@ -59,6 +59,16 @@ button{cursor:pointer}
 .card-title{margin:0 0 6px;font-size:17px;line-height:1.25}
 .card-description{color:var(--muted);font-size:13px;line-height:1.5}
 
+/* Próximamente */
+.upcoming{padding:26px 24px 0}
+.upcoming .section-title{margin-bottom:14px}
+.up-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.up-card{position:relative;padding:20px 22px;background:linear-gradient(135deg,#1d2a2d,#1b1b1b);border:1px solid #2c4348;border-left:3px solid var(--cyan);border-radius:8px}
+.up-badge{display:inline-block;margin-bottom:10px;padding:4px 10px;border-radius:6px;background:rgba(0,188,212,.14);border:1px solid var(--cyan);color:var(--cyan2);font-size:12px;font-weight:700}
+.up-title{margin:0 0 6px;font-size:20px}
+.up-desc{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.detail-description:empty{display:none}
+
 /* Detalle (estilo Plex) */
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.82);z-index:3000}
 .modal.open{display:flex}
@@ -132,6 +142,11 @@ button{cursor:pointer}
    </div>
   </section>
 
+  <section class="upcoming">
+   <h2 class="section-title">Próximamente</h2>
+   <div class="up-grid" id="upGrid"></div>
+  </section>
+
   <div class="search-wrap">
    <input id="searchInput" class="search" type="search" placeholder="Buscar películas y series…" autocomplete="off">
   </div>
@@ -190,25 +205,36 @@ const TOKEN_KEY = "knfoundation_token";
 const AUTH_PAGE = "https://smartium25.github.io/auth";
 const PREVIEW_START = 60; /* la vista previa empieza en el minuto 1 */
 
-const banners = [
- {file:"Día 1, Videos Sentimentales.mp4", image:"banner 1.JPG", title:"Videos Sentimentales", description:"Sigue la historia a lo largo de la serie Videos Sentimentales.", type:"Serie"},
- {file:"pepitothemovie.mp4", image:"banner 2.JPG", title:"Pepito: La película", description:"Pepito vive una nueva aventura.", type:"Película"},
- {file:"French Toast y pepito the movie.mp4", image:"banner 3.JPG", title:"French Toast y Pepito", description:"French Toast y Pepito se unen en una nueva aventura.", type:"Película"}
+const VIDEO_EXT = /\.(mp4|webm|ogg|mov|m4v)$/i;
+/* Archivos de la carpeta que NO se muestran */
+const EXCLUDE = ["pepitothemovie.mp4"];
+/* Solo si la autodetección del repositorio falla (por ejemplo dominio propio) */
+const REPO_OVERRIDE = {owner:"", repo:"", path:""};
+/* Descripciones opcionales, por título (nombre del archivo sin extensión) */
+const DESCRIPTIONS = {
+ "French Toast y pepito the movie": "French Toast y Pepito se unen en una nueva aventura."
+};
+/* Se usa solo si GitHub no responde (límite de peticiones o ejecución local) */
+const FALLBACK_FILES = [
+ "Día 1, Videos Sentimentales.mp4","Día 2, Videos Sentimentales.mp4","Día 3, Videos Sentimentales.mp4","Día 4, Videos Sentimentales.mp4",
+ "Día 5, Videos sentimentales- El regresar de la Familia Peluche.mp4","Día 6, Videos Sentimentales- El Regreso De la Familia Peluche.mp4",
+ "Día 7, Videos Sentimentales- El Regresar De la Familia Peluche .mp4","Día 8, Videos Sentimentales- El regreso de la Familia Peluche.mp4",
+ "Día 9, Videos Sentimentales- El Regresar De la Familia Peluche.mp4","French Toast y pepito the movie.mp4"
 ];
 
-const titles = [
- {file:"Día 1, Videos Sentimentales.mp4", title:"Día 1", description:"El primer capítulo de la serie Videos Sentimentales.", type:"series"},
- {file:"Día 2, Videos Sentimentales.mp4", title:"Día 2", description:"El segundo capítulo de la serie Videos Sentimentales.", type:"series"},
- {file:"Día 3, Videos Sentimentales.mp4", title:"Día 3", description:"El tercer capítulo de la serie Videos Sentimentales.", type:"series"},
- {file:"Día 4, Videos Sentimentales.mp4", title:"Día 4", description:"El cuarto capítulo de la serie Videos Sentimentales.", type:"series"},
- {file:"Día 5, Videos sentimentales- El regresar de la Familia Peluche.mp4", title:"El regreso de La Familia Peluche — Día 5", description:"El quinto capítulo de la serie.", type:"series"},
- {file:"Día 6, Videos Sentimentales- El Regreso De la Familia Peluche.mp4", title:"El regreso de La Familia Peluche — Día 6", description:"El sexto capítulo de la serie.", type:"series"},
- {file:"Día 7, Videos Sentimentales- El Regresar De la Familia Peluche .mp4", title:"El regreso de La Familia Peluche — Día 7", description:"El séptimo capítulo de la serie.", type:"series"},
- {file:"Día 8, Videos Sentimentales- El regreso de la Familia Peluche.mp4", title:"El regreso de La Familia Peluche — Día 8", description:"El octavo capítulo de la serie.", type:"series"},
- {file:"Día 9, Videos Sentimentales- El Regresar De la Familia Peluche.mp4", title:"El regreso de La Familia Peluche — Día 9", description:"El noveno capítulo de la serie.", type:"series"},
- {file:"French Toast y pepito the movie.mp4", title:"French Toast y Pepito", description:"French Toast y Pepito se unen en una nueva aventura.", type:"movie"},
- {file:"pepitothemovie.mp4", title:"Pepito: La película", description:"Una nueva aventura protagonizada por Pepito.", type:"movie"}
+const banners = [
+ {file:"Día 1, Videos Sentimentales.mp4", image:"banner 1.JPG", title:"Videos Sentimentales", description:"Sigue la historia a lo largo de la serie Videos Sentimentales.", type:"Serie"},
+ {image:"banner 2.JPG", title:"Pepito: The Movie 2", description:"Pepito regresa para una nueva aventura.", type:"Próximamente"},
+ {file:"French Toast y pepito the movie.mp4", image:"banner 3.JPG", title:"Pepito and French Toast", description:"Pepito y French Toast se unen para una nueva aventura.", type:"Película"}
 ];
+
+/* Solo publicidad: no tienen vídeo */
+const upcoming = [
+ {title:"Pepito: The Movie Remastered", description:"La película de Pepito, remasterizada."},
+ {title:"Pepito: The Movie 2", description:"Pepito regresa para una nueva aventura."}
+];
+
+let titles = [];
 
 /* ===== ELEMENTOS ===== */
 const $ = id => document.getElementById(id);
@@ -272,6 +298,48 @@ async function checkAuth(){
  }finally{ clearTimeout(timer); }
 }
 
+/* ===== CATÁLOGO (carpeta del repositorio) ===== */
+function repoInfo(){
+ const owner = location.hostname.split(".")[0];
+ const parts = location.pathname.split("/").filter(Boolean);
+ if(parts.length && /\.[a-z0-9]+$/i.test(parts[parts.length-1])) parts.pop();
+ const repo = parts.shift() || owner + ".github.io";
+ return {
+  owner: REPO_OVERRIDE.owner || owner,
+  repo: REPO_OVERRIDE.repo || repo,
+  path: REPO_OVERRIDE.path || parts.join("/")
+ };
+}
+
+/* Título = nombre del archivo sin extensión; si empieza con D, es serie */
+function buildTitles(names){
+ return names
+  .filter(n => VIDEO_EXT.test(n) && !EXCLUDE.includes(n))
+  .sort((a,b) => a.localeCompare(b,"es",{numeric:true}))
+  .map(file => {
+   const title = file.replace(/\.[^.]+$/,"").trim();
+   return {file, title, description: DESCRIPTIONS[title] || "", type: /^d/i.test(file) ? "series" : "movie"};
+  });
+}
+
+async function loadTitles(){
+ const key = "sm_files";
+ try{
+  const c = JSON.parse(sessionStorage.getItem(key) || "null");
+  if(c && Date.now() - c.t < 600000) return buildTitles(c.names);
+ }catch(e){}
+ try{
+  const {owner,repo,path} = repoInfo();
+  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${encodeURI(path)}`);
+  if(!r.ok) throw new Error(r.status);
+  const names = (await r.json()).filter(f => f.type === "file").map(f => f.name);
+  try{ sessionStorage.setItem(key, JSON.stringify({t:Date.now(), names})); }catch(e){}
+  return buildTitles(names);
+ }catch(e){
+  return buildTitles(FALLBACK_FILES);
+ }
+}
+
 /* ===== BANNERS ===== */
 let currentBanner = 0;
 function renderBanner(){
@@ -280,16 +348,28 @@ function renderBanner(){
  $("heroTitle").textContent = b.title;
  $("heroDescription").textContent = b.description;
  $("heroType").textContent = b.type;
- $("heroCount").textContent = b.type==="Serie"
-  ? titles.filter(t=>t.type==="series").length + " episodios"
-  : "Película destacada";
+ const n = titles.filter(t => t.type === "series").length;
+ $("heroCount").textContent = b.type === "Serie" ? (n ? n + " episodios" : "Serie")
+  : b.type === "Próximamente" ? "Muy pronto" : "Película destacada";
+ const item = b.file && titles.find(t => t.file === b.file);
+ $("heroButton").style.display = item ? "" : "none";
 }
 $("heroButton").addEventListener("click",()=>{
- const item = titles.find(t=>t.file===banners[currentBanner].file);
+ const b = banners[currentBanner];
+ const item = b.file && titles.find(t => t.file === b.file);
  if(item) openDetail(item);
 });
-renderBanner();
-setInterval(()=>{ currentBanner=(currentBanner+1)%banners.length; renderBanner(); },5000);
+
+function renderUpcoming(){
+ $("upGrid").replaceChildren(...upcoming.map(u => {
+  const c = document.createElement("div"); c.className = "up-card";
+  const badge = document.createElement("span"); badge.className = "up-badge"; badge.textContent = "Próximamente";
+  const h = document.createElement("h3"); h.className = "up-title"; h.textContent = u.title;
+  const d = document.createElement("p"); d.className = "up-desc"; d.textContent = u.description;
+  c.append(badge,h,d);
+  return c;
+ }));
+}
 
 /* ===== TARJETAS ===== */
 function createCard(item){
@@ -323,7 +403,8 @@ function createCard(item){
  body.className = "card-body";
  const h = document.createElement("h3"); h.className="card-title"; h.textContent=item.title;
  const d = document.createElement("div"); d.className="card-description"; d.textContent=item.description;
- body.append(h,d);
+ body.append(h);
+ if(item.description) body.append(d);
 
  card.append(preview,body);
  card.addEventListener("click",()=>openDetail(item));
@@ -427,7 +508,11 @@ document.addEventListener("keydown",e=>{
 /* ===== INICIO ===== */
 async function start(){
  if(!(await checkAuth())) return;
+ titles = await loadTitles();
+ renderBanner();
+ renderUpcoming();
  renderTitles();
+ setInterval(()=>{ currentBanner=(currentBanner+1)%banners.length; renderBanner(); },5000);
  loading.style.display = "none";
  app.style.display = "block";
 }
