@@ -1,1844 +1,438 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Smart-Movies</title>
-
 <style>
-:root{
-    --bg:#121212;
-    --panel:#1b1b1b;
-    --card:#202020;
-    --card2:#272727;
-    --cyan:#00bcd4;
-    --cyan2:#00e5ff;
-    --text:#ffffff;
-    --muted:#aaaaaa;
-    --border:#333333;
-    --danger:#ff5555;
-    --shadow:0 10px 30px rgba(0,0,0,.35);
-}
-
-*{
-    box-sizing:border-box;
-}
-
-html,
-body{
-    margin:0;
-    padding:0;
-    min-height:100%;
-    background:var(--bg);
-    color:var(--text);
-    font-family:Segoe UI,Roboto,Arial,sans-serif;
-}
-
-body{
-    overflow-x:hidden;
-}
-
-button,
-input{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-#loading{
-    position:fixed;
-    inset:0;
-    background:var(--bg);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:9999;
-    font-size:18px;
-    color:var(--cyan2);
-}
-
-#app{
-    display:none;
-}
-
-/* HEADER */
-
-.header{
-    position:sticky;
-    top:0;
-    z-index:1000;
-    height:70px;
-    background:rgba(18,18,18,.96);
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 28px;
-    backdrop-filter:blur(10px);
-}
-
-.brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.brand-mark{
-    width:42px;
-    height:42px;
-    border-radius:12px;
-    background:var(--cyan);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#000;
-    font-weight:900;
-    font-size:18px;
-}
-
-.brand-text{
-    display:flex;
-    flex-direction:column;
-}
-
-.brand-name{
-    font-size:20px;
-    font-weight:800;
-}
-
-.brand-sub{
-    color:var(--muted);
-    font-size:12px;
-}
-
-/* ACCOUNT */
-
-.account-area{
-    position:relative;
-}
-
-.account-button{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    border:1px solid #345;
-    background:#171717;
-    color:white;
-    border-radius:18px;
-    padding:8px 12px;
-    transition:.2s;
-}
-
-.account-button:hover{
-    border-color:var(--cyan);
-}
-
-.account-avatar{
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    object-fit:cover;
-    background:#282828;
-    border:1px solid #444;
-    display:none;
-}
-
-.account-default-avatar{
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    background:#252525;
-    border:1px solid #444;
-    color:var(--cyan2);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:800;
-}
-
-.account-name{
-    color:var(--cyan2);
-    font-weight:700;
-    max-width:180px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-
-.account-arrow{
-    color:#888;
-    font-size:12px;
-}
-
-.account-menu{
-    position:absolute;
-    right:0;
-    top:calc(100% + 10px);
-    width:220px;
-    background:#1b1b1b;
-    border:1px solid #3a3a3a;
-    border-radius:18px;
-    padding:8px;
-    box-shadow:var(--shadow);
-    display:none;
-}
-
-.account-menu.open{
-    display:block;
-}
-
-.account-menu-user{
-    padding:12px;
-    border-bottom:1px solid #333;
-    margin-bottom:6px;
-}
-
-.account-menu-username{
-    font-weight:800;
-    color:white;
-}
-
-.account-menu-email{
-    margin-top:4px;
-    color:#888;
-    font-size:12px;
-    word-break:break-word;
-}
-
-.account-option{
-    width:100%;
-    border:0;
-    background:transparent;
-    color:#ddd;
-    text-align:left;
-    padding:11px 12px;
-    border-radius:12px;
-}
-
-.account-option:hover{
-    background:#282828;
-}
-
-.account-option.danger{
-    color:#ff7777;
-}
-
-/* HERO */
-
-.hero{
-    position:relative;
-    min-height:520px;
-    margin:20px 24px 0;
-    border-radius:28px;
-    overflow:hidden;
-    background:#171717;
-    box-shadow:var(--shadow);
-    border:1px solid var(--border);
-}
-
-.hero-image{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    opacity:.72;
-}
-
-.hero-overlay{
-    position:absolute;
-    inset:0;
-    background:
-        linear-gradient(
-            90deg,
-            rgba(0,0,0,.92) 0%,
-            rgba(0,0,0,.72) 38%,
-            rgba(0,0,0,.25) 75%,
-            rgba(0,0,0,.50) 100%
-        ),
-        linear-gradient(
-            0deg,
-            rgba(18,18,18,.94) 0%,
-            transparent 45%
-        );
-}
-
-.hero-content{
-    position:relative;
-    z-index:2;
-    max-width:680px;
-    padding:110px 60px 60px;
-}
-
-.hero-label{
-    color:var(--cyan2);
-    font-weight:800;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    font-size:13px;
-    margin-bottom:14px;
-}
-
-.hero-title{
-    margin:0 0 18px;
-    font-size:54px;
-    line-height:1.03;
-}
-
-.hero-description{
-    margin:0 0 22px;
-    color:#d0d0d0;
-    line-height:1.6;
-    font-size:17px;
-}
-
-.hero-meta{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.hero-tag{
-    border:1px solid #4a4a4a;
-    background:rgba(20,20,20,.72);
-    padding:8px 12px;
-    border-radius:16px;
-    color:#ddd;
-    font-size:13px;
-}
-
-/* SEARCH */
-
-.search-wrap{
-    padding:28px 24px 8px;
-}
-
-.search{
-    width:100%;
-    max-width:720px;
-    display:block;
-    margin:auto;
-    background:#1b1b1b;
-    border:1px solid var(--border);
-    border-radius:18px;
-    color:white;
-    padding:15px 18px;
-    outline:none;
-    transition:.2s;
-}
-
-.search:focus{
-    border-color:var(--cyan);
-    box-shadow:0 0 0 3px rgba(0,188,212,.12);
-}
-
-.search::placeholder{
-    color:#777;
-}
-
-/* CONTENT */
-
-.content{
-    padding:25px 24px 50px;
-}
-
-.section{
-    margin-top:28px;
-}
-
-.section-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:end;
-    gap:20px;
-    margin-bottom:16px;
-}
-
-.section-title{
-    margin:0;
-    font-size:28px;
-}
-
-.section-count{
-    color:var(--muted);
-    font-size:14px;
-}
-
-/* CARDS */
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(245px,1fr));
-    gap:18px;
-}
-
-.card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:20px;
-    overflow:hidden;
-    transition:.2s;
-    cursor:pointer;
-}
-
-.card:hover{
-    transform:translateY(-4px);
-    border-color:#4a4a4a;
-    box-shadow:var(--shadow);
-}
-
-.card-preview{
-    height:145px;
-    background:#111;
-    position:relative;
-    overflow:hidden;
-}
-
-.card-preview video{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-}
-
-.card-placeholder{
-    width:100%;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#666;
-    background:
-        radial-gradient(circle at center, #292929 0, #111 65%);
-}
-
-.card-type{
-    position:absolute;
-    left:10px;
-    top:10px;
-    padding:6px 9px;
-    border-radius:12px;
-    background:rgba(0,0,0,.75);
-    border:1px solid #444;
-    font-size:11px;
-    font-weight:800;
-    text-transform:uppercase;
-}
-
-.card-body{
-    padding:16px;
-}
-
-.card-title{
-    margin:0 0 8px;
-    font-size:18px;
-    line-height:1.25;
-}
-
-.card-description{
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.5;
-    min-height:40px;
-}
-
-/* EMPTY */
-
-.empty{
-    display:none;
-    border:1px dashed #444;
-    border-radius:18px;
-    padding:35px;
-    text-align:center;
-    color:#777;
-}
-
-/* PLAYER */
-
-.modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.82);
-    z-index:3000;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-}
-
-.modal.open{
-    display:flex;
-}
-
-.player{
-    width:min(1100px,100%);
-    background:#181818;
-    border:1px solid #444;
-    border-radius:24px;
-    overflow:hidden;
-    box-shadow:0 20px 70px rgba(0,0,0,.6);
-}
-
-.player-top{
-    position:relative;
-    background:#000;
-}
-
-.player video{
-    width:100%;
-    max-height:70vh;
-    display:block;
-    background:#000;
-}
-
-.close{
-    position:absolute;
-    top:14px;
-    right:14px;
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    border:1px solid #555;
-    background:rgba(0,0,0,.72);
-    color:white;
-    z-index:5;
-    font-size:20px;
-}
-
-.player-info{
-    padding:20px;
-}
-
-.player-title{
-    margin:0 0 8px;
-    font-size:28px;
-}
-
-.player-description{
-    color:#bbb;
-    line-height:1.5;
-    margin:0;
-}
-
-/* ERROR */
-
-.error{
-    position:fixed;
-    left:20px;
-    right:20px;
-    bottom:20px;
-    z-index:5000;
-    display:none;
-    background:#261919;
-    border:1px solid #6b3333;
-    color:#ffb5b5;
-    border-radius:14px;
-    padding:14px 16px;
-    box-shadow:var(--shadow);
-}
-
-/* RESPONSIVE */
+:root{--bg:#121212;--card:#202020;--cyan:#00bcd4;--cyan2:#00e5ff;--muted:#aaa;--border:#333;--shadow:0 10px 30px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:#fff;font-family:Segoe UI,Roboto,Arial,sans-serif}
+body{overflow-x:hidden}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--cyan2);outline-offset:2px}
+
+#loading{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;color:var(--cyan2);font-size:18px;text-align:center;padding:20px}
+#loading button{background:var(--cyan);color:#000;border:0;border-radius:8px;padding:10px 18px;font-weight:700}
+#app{display:none}
+
+.header{position:sticky;top:0;z-index:1000;height:64px;display:flex;align-items:center;padding:0 28px;background:rgba(18,18,18,.96);border-bottom:1px solid var(--border);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:38px;height:38px;border-radius:8px;background:var(--cyan);color:#000;font-weight:900;display:flex;align-items:center;justify-content:center}
+.brand-name{font-size:20px;font-weight:800}
+
+.hero{position:relative;min-height:480px;margin:20px 24px 0;border-radius:12px;overflow:hidden;background:#171717;border:1px solid var(--border)}
+.hero-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.72}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.7) 38%,rgba(0,0,0,.2) 80%),linear-gradient(0deg,rgba(18,18,18,.94) 0%,transparent 45%)}
+.hero-content{position:relative;max-width:640px;padding:100px 56px 56px}
+.hero-title{margin:0 0 16px;font-size:50px;line-height:1.05}
+.hero-description{margin:0 0 20px;color:#d0d0d0;line-height:1.6;font-size:17px}
+.tags{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.tag{border:1px solid #4a4a4a;background:rgba(20,20,20,.72);padding:6px 12px;border-radius:8px;color:#ddd;font-size:13px}
+
+.btn{border:0;border-radius:8px;padding:12px 26px;font-weight:800;font-size:16px}
+.btn-primary{background:var(--cyan);color:#000}
+.btn-primary:hover{background:var(--cyan2);box-shadow:0 0 18px rgba(0,229,255,.35)}
+.btn-ghost{background:#2a2a2a;border:1px solid #444}
+.btn-ghost:hover{border-color:var(--cyan)}
+
+.search-wrap{padding:26px 24px 0}
+.search{display:block;width:100%;max-width:720px;margin:auto;background:#1b1b1b;border:1px solid var(--border);border-radius:8px;padding:14px 18px;outline:none}
+.search:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,188,212,.12)}
+
+.content{padding:10px 24px 50px}
+.section{margin-top:28px}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}
+.section-title{margin:0;font-size:26px}
+.section-count{color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:18px}
+.empty{display:none;border:1px dashed #444;border-radius:8px;padding:30px;text-align:center;color:#777}
+
+.card{padding:0;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:.2s}
+.card:hover,.card:focus-visible{transform:translateY(-4px);border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),var(--shadow)}
+.card-preview{position:relative;height:145px;background:#111}
+.card-preview video{width:100%;height:100%;object-fit:cover;display:block}
+.card-placeholder{height:100%;display:flex;align-items:center;justify-content:center;color:#666}
+.card-type{position:absolute;left:10px;top:10px;padding:5px 9px;border-radius:6px;background:rgba(0,0,0,.75);border:1px solid #444;font-size:11px;font-weight:700;pointer-events:none}
+.card-body{padding:14px 16px 16px}
+.card-title{margin:0 0 6px;font-size:17px;line-height:1.25}
+.card-description{color:var(--muted);font-size:13px;line-height:1.5}
+
+/* Detalle (estilo Plex) */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.82);z-index:3000}
+.modal.open{display:flex}
+.detail{position:relative;width:min(980px,100%);max-height:92vh;overflow:auto;background:#181818;border:1px solid #444;border-radius:12px;box-shadow:0 20px 70px rgba(0,0,0,.6)}
+.detail-backdrop{position:relative;height:340px;background:#000}
+.detail-backdrop video{width:100%;height:100%;object-fit:cover;display:block;opacity:.8}
+.detail-backdrop::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#181818 0%,rgba(24,24,24,.2) 60%,transparent)}
+.detail-body{position:relative;margin-top:-90px;padding:0 36px 32px;z-index:2}
+.detail-title{margin:0 0 12px;font-size:38px;line-height:1.1}
+.detail-description{color:#ccc;line-height:1.65;max-width:70ch;margin:0 0 22px}
+.actions{display:flex;gap:12px}
+.close{position:absolute;top:14px;right:14px;z-index:5;width:40px;height:40px;border-radius:50%;border:1px solid #555;background:rgba(0,0,0,.72);font-size:20px}
+.episodes{margin-top:30px}
+.episodes h3{margin:0 0 12px;font-size:18px}
+.ep-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.ep{text-align:left;background:#222;border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-size:14px}
+.ep:hover{border-color:var(--cyan)}
+.ep.current{border-color:var(--cyan2);color:var(--cyan2)}
+
+/* Reproductor */
+#playerModal{z-index:4000;background:rgba(0,0,0,.92)}
+.player{position:relative;width:min(1100px,100%);background:#000;border:1px solid #444;border-radius:12px;overflow:hidden}
+.player video{display:block;width:100%;max-height:78vh;background:#000}
+.player-title{margin:0;padding:14px 20px;background:#181818;font-size:20px}
+
+.error{position:fixed;left:20px;right:20px;bottom:20px;z-index:5000;display:none;background:#261919;border:1px solid #6b3333;color:#ffb5b5;border-radius:8px;padding:14px 16px}
 
 @media(max-width:800px){
-
-    .header{
-        padding:0 16px;
-    }
-
-    .brand-sub{
-        display:none;
-    }
-
-    .hero{
-        margin:14px 14px 0;
-        min-height:480px;
-        border-radius:22px;
-    }
-
-    .hero-content{
-        padding:85px 28px 50px;
-    }
-
-    .hero-title{
-        font-size:40px;
-    }
-
-    .hero-description{
-        font-size:15px;
-    }
-
-    .content,
-    .search-wrap{
-        padding-left:14px;
-        padding-right:14px;
-    }
-
-    .grid{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-
-    .card-preview{
-        height:120px;
-    }
-
-    .account-name{
-        max-width:110px;
-    }
+ .header{padding:0 16px}
+ .hero{margin:14px 14px 0;min-height:440px}
+ .hero-content{padding:80px 26px 44px}
+ .hero-title{font-size:36px}
+ .content,.search-wrap{padding-left:14px;padding-right:14px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .card-preview{height:120px}
+ .detail-backdrop{height:220px}
+ .detail-body{padding:0 20px 24px;margin-top:-60px}
+ .detail-title{font-size:28px}
 }
-
 @media(max-width:520px){
-
-    .header{
-        height:62px;
-    }
-
-    .brand-name{
-        font-size:17px;
-    }
-
-    .brand-mark{
-        width:36px;
-        height:36px;
-        border-radius:10px;
-        font-size:15px;
-    }
-
-    .account-button{
-        padding:6px 9px;
-    }
-
-    .account-default-avatar,
-    .account-avatar{
-        width:30px;
-        height:30px;
-    }
-
-    .account-name{
-        display:none;
-    }
-
-    .hero{
-        min-height:430px;
-    }
-
-    .hero-content{
-        padding:70px 22px 40px;
-    }
-
-    .hero-title{
-        font-size:33px;
-    }
-
-    .grid{
-        grid-template-columns:1fr;
-    }
-
-    .card-preview{
-        height:170px;
-    }
+ .grid{grid-template-columns:1fr}
+ .card-preview{height:170px}
 }
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
-
 <body>
 
-<div id="loading">
-    Loading Smart-Movies...
-</div>
+<div id="loading">Cargando Smart-Movies…</div>
 
 <div id="app">
-
-    <header class="header">
-
-        <div class="brand">
-            <div class="brand-mark">SM</div>
-
-            <div class="brand-text">
-                <div class="brand-name">Smart-Movies</div>
-                <div class="brand-sub">Movies and series</div>
-            </div>
-        </div>
-
-        <div class="account-area">
-
-            <button
-                class="account-button"
-                id="accountButton"
-                type="button"
-            >
-
-                <img
-                    id="accountAvatar"
-                    class="account-avatar"
-                    alt="Profile picture"
-                >
-
-                <div
-                    id="accountDefaultAvatar"
-                    class="account-default-avatar"
-                >
-                    U
-                </div>
-
-                <span
-                    id="accountName"
-                    class="account-name"
-                >
-                    @user
-                </span>
-
-                <span class="account-arrow">
-                    ▾
-                </span>
-
-            </button>
-
-            <div
-                id="accountMenu"
-                class="account-menu"
-            >
-
-                <div class="account-menu-user">
-
-                    <div
-                        id="menuUsername"
-                        class="account-menu-username"
-                    >
-                        @user
-                    </div>
-
-                    <div
-                        id="menuEmail"
-                        class="account-menu-email"
-                    >
-                        user@knfoundation.org
-                    </div>
-
-                </div>
-
-                <button
-                    id="accountSettings"
-                    class="account-option"
-                    type="button"
-                >
-                    Account
-                </button>
-
-                <button
-                    id="logoutButton"
-                    class="account-option danger"
-                    type="button"
-                >
-                    Sign out
-                </button>
-
-            </div>
-
-        </div>
-
-    </header>
-
-    <main>
-
-        <section class="hero">
-
-            <img
-                id="heroImage"
-                class="hero-image"
-                src="banner 1.JPG"
-                alt="Smart-Movies banner"
-            >
-
-            <div class="hero-overlay"></div>
-
-            <div class="hero-content">
-
-                <div
-                    class="hero-label"
-                    id="heroLabel"
-                >
-                    Series
-                </div>
-
-                <h1
-                    class="hero-title"
-                    id="heroTitle"
-                >
-                    Sentimental Videos
-                </h1>
-
-                <p
-                    class="hero-description"
-                    id="heroDescription"
-                >
-                    Follow the story through the Sentimental Videos series.
-                </p>
-
-                <div class="hero-meta">
-
-                    <div
-                        class="hero-tag"
-                        id="heroType"
-                    >
-                        Series
-                    </div>
-
-                    <div
-                        class="hero-tag"
-                        id="heroCount"
-                    >
-                        9 episodes
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <div class="search-wrap">
-
-            <input
-                id="searchInput"
-                class="search"
-                type="text"
-                placeholder="Search movies and series..."
-                autocomplete="off"
-            >
-
-        </div>
-
-        <div class="content">
-
-            <section class="section">
-
-                <div class="section-head">
-
-                    <h2 class="section-title">
-                        Series
-                    </h2>
-
-                    <div
-                        class="section-count"
-                        id="seriesCount"
-                    ></div>
-
-                </div>
-
-                <div
-                    class="grid"
-                    id="seriesGrid"
-                ></div>
-
-                <div
-                    class="empty"
-                    id="seriesEmpty"
-                >
-                    No series found.
-                </div>
-
-            </section>
-
-            <section class="section">
-
-                <div class="section-head">
-
-                    <h2 class="section-title">
-                        Movies
-                    </h2>
-
-                    <div
-                        class="section-count"
-                        id="moviesCount"
-                    ></div>
-
-                </div>
-
-                <div
-                    class="grid"
-                    id="moviesGrid"
-                ></div>
-
-                <div
-                    class="empty"
-                    id="moviesEmpty"
-                >
-                    No movies found.
-                </div>
-
-            </section>
-
-        </div>
-
-    </main>
-
-</div>
-
-<div
-    class="modal"
-    id="playerModal"
->
-
-    <div class="player">
-
-        <div class="player-top">
-
-            <button
-                class="close"
-                id="closePlayer"
-                aria-label="Close"
-                type="button"
-            >
-                ×
-            </button>
-
-            <video
-                id="playerVideo"
-                controls
-                playsinline
-            ></video>
-
-        </div>
-
-        <div class="player-info">
-
-            <h2
-                class="player-title"
-                id="playerTitle"
-            ></h2>
-
-            <p
-                class="player-description"
-                id="playerDescription"
-            ></p>
-
-        </div>
-
+ <header class="header">
+  <div class="brand">
+   <div class="brand-mark">SM</div>
+   <div class="brand-name">Smart-Movies</div>
+  </div>
+ </header>
+
+ <main>
+  <section class="hero">
+   <img id="heroImage" class="hero-image" src="banner 1.JPG" alt="">
+   <div class="hero-overlay"></div>
+   <div class="hero-content">
+    <h1 class="hero-title" id="heroTitle"></h1>
+    <p class="hero-description" id="heroDescription"></p>
+    <div class="tags">
+     <span class="tag" id="heroType"></span>
+     <span class="tag" id="heroCount"></span>
     </div>
+    <button class="btn btn-primary" id="heroButton" type="button">Ver detalles</button>
+   </div>
+  </section>
 
+  <div class="search-wrap">
+   <input id="searchInput" class="search" type="search" placeholder="Buscar películas y series…" autocomplete="off">
+  </div>
+
+  <div class="content">
+   <section class="section">
+    <div class="section-head"><h2 class="section-title">Series</h2><div class="section-count" id="seriesCount"></div></div>
+    <div class="grid" id="seriesGrid"></div>
+    <div class="empty" id="seriesEmpty">No se encontraron series.</div>
+   </section>
+   <section class="section">
+    <div class="section-head"><h2 class="section-title">Películas</h2><div class="section-count" id="moviesCount"></div></div>
+    <div class="grid" id="moviesGrid"></div>
+    <div class="empty" id="moviesEmpty">No se encontraron películas.</div>
+   </section>
+  </div>
+ </main>
 </div>
 
-<div
-    class="error"
-    id="errorBox"
-></div>
+<!-- Detalle -->
+<div class="modal" id="detailModal">
+ <div class="detail" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+  <button class="close" id="closeDetail" aria-label="Cerrar" type="button">×</button>
+  <div class="detail-backdrop"><video id="detailVideo" muted loop playsinline></video></div>
+  <div class="detail-body">
+   <h2 class="detail-title" id="detailTitle"></h2>
+   <div class="tags"><span class="tag" id="detailType"></span><span class="tag" id="detailDuration"></span></div>
+   <p class="detail-description" id="detailDescription"></p>
+   <div class="actions">
+    <button class="btn btn-primary" id="watchButton" type="button">▶ Ver</button>
+    <button class="btn btn-ghost" id="backButton" type="button">Volver</button>
+   </div>
+   <div class="episodes" id="episodes">
+    <h3>Episodios</h3>
+    <div class="ep-list" id="epList"></div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<!-- Reproductor -->
+<div class="modal" id="playerModal">
+ <div class="player">
+  <button class="close" id="closePlayer" aria-label="Cerrar reproductor" type="button">×</button>
+  <video id="playerVideo" controls playsinline></video>
+  <h2 class="player-title" id="playerTitle"></h2>
+ </div>
+</div>
+
+<div class="error" id="errorBox"></div>
 
 <script>
-/* =========================
-   CONFIGURATION
-========================= */
-
-const AUTH_API =
-    "https://titans-latter-opinions-invitations.trycloudflare.com";
-
-const TOKEN_KEY =
-    "knfoundation_token";
-
-const AUTH_PAGE =
-    "https://smartium25.github.io/auth";
-
-const ACCOUNT_PAGE =
-    "https://smartium25.github.io/account-manager";
-
-/* =========================
-   BANNERS
-========================= */
+/* ===== CONFIGURACIÓN ===== */
+const AUTH_API = "https://titans-latter-opinions-invitations.trycloudflare.com";
+const TOKEN_KEY = "knfoundation_token";
+const AUTH_PAGE = "https://smartium25.github.io/auth";
+const PREVIEW_START = 60; /* la vista previa empieza en el minuto 1 */
 
 const banners = [
-    {
-        image: "banner 1.JPG",
-        title: "Sentimental Videos",
-        description:
-            "Follow the story through the Sentimental Videos series.",
-        type: "Series",
-        count: "9 episodes"
-    },
-    {
-        image: "banner 2.JPG",
-        title: "Pepito: The Movie 2",
-        description:
-            "Pepito returns for a brand-new adventure.",
-        type: "Movie",
-        count: "Featured movie"
-    },
-    {
-        image: "banner 3.JPG",
-        title: "Pepito and French Toast",
-        description:
-            "Pepito and French Toast team up for a new adventure.",
-        type: "Movie",
-        count: "Featured movie"
-    }
+ {file:"Día 1, Videos Sentimentales.mp4", image:"banner 1.JPG", title:"Videos Sentimentales", description:"Sigue la historia a lo largo de la serie Videos Sentimentales.", type:"Serie"},
+ {file:"pepitothemovie.mp4", image:"banner 2.JPG", title:"Pepito: La película", description:"Pepito vive una nueva aventura.", type:"Película"},
+ {file:"French Toast y pepito the movie.mp4", image:"banner 3.JPG", title:"French Toast y Pepito", description:"French Toast y Pepito se unen en una nueva aventura.", type:"Película"}
 ];
-
-/* =========================
-   MOVIES / SERIES
-========================= */
 
 const titles = [
-
-    {
-        file: "Día 1, Videos Sentimentales.mp4",
-        title: "Day 1",
-        description:
-            "The first chapter of the Sentimental Videos series.",
-        type: "series"
-    },
-
-    {
-        file: "Día 2, Videos Sentimentales.mp4",
-        title: "Day 2",
-        description:
-            "The second chapter of the Sentimental Videos series.",
-        type: "series"
-    },
-
-    {
-        file: "Día 3, Videos Sentimentales.mp4",
-        title: "Day 3",
-        description:
-            "The third chapter of the Sentimental Videos series.",
-        type: "series"
-    },
-
-    {
-        file: "Día 4, Videos Sentimentales.mp4",
-        title: "Day 4",
-        description:
-            "The fourth chapter of the Sentimental Videos series.",
-        type: "series"
-    },
-
-    {
-        file: "Día 5, Videos sentimentales- El regresar de la Familia Peluche.mp4",
-        title: "The Return of La Familia Peluche — Day 5",
-        description:
-            "The fifth chapter of the series.",
-        type: "series"
-    },
-
-    {
-        file: "Día 6, Videos Sentimentales- El Regreso De la Familia Peluche.mp4",
-        title: "The Return of La Familia Peluche — Day 6",
-        description:
-            "The sixth chapter of the series.",
-        type: "series"
-    },
-
-    {
-        file: "Día 7, Videos Sentimentales- El Regresar De la Familia Peluche .mp4",
-        title: "The Return of La Familia Peluche — Day 7",
-        description:
-            "The seventh chapter of the series.",
-        type: "series"
-    },
-
-    {
-        file: "Día 8, Videos Sentimentales- El regreso de la Familia Peluche.mp4",
-        title: "The Return of La Familia Peluche — Day 8",
-        description:
-            "The eighth chapter of the series.",
-        type: "series"
-    },
-
-    {
-        file: "Día 9, Videos Sentimentales- El Regresar De la Familia Peluche.mp4",
-        title: "The Return of La Familia Peluche — Day 9",
-        description:
-            "The ninth chapter of the series.",
-        type: "series"
-    },
-
-    {
-        file: "French Toast y pepito the movie.mp4",
-        title: "French Toast and Pepito",
-        description:
-            "French Toast and Pepito team up for a new adventure.",
-        type: "movie"
-    },
-
-    {
-        file: "pepitothemovie.mp4",
-        title: "Pepito: The Movie",
-        description:
-            "A new adventure starring Pepito.",
-        type: "movie"
-    }
+ {file:"Día 1, Videos Sentimentales.mp4", title:"Día 1", description:"El primer capítulo de la serie Videos Sentimentales.", type:"series"},
+ {file:"Día 2, Videos Sentimentales.mp4", title:"Día 2", description:"El segundo capítulo de la serie Videos Sentimentales.", type:"series"},
+ {file:"Día 3, Videos Sentimentales.mp4", title:"Día 3", description:"El tercer capítulo de la serie Videos Sentimentales.", type:"series"},
+ {file:"Día 4, Videos Sentimentales.mp4", title:"Día 4", description:"El cuarto capítulo de la serie Videos Sentimentales.", type:"series"},
+ {file:"Día 5, Videos sentimentales- El regresar de la Familia Peluche.mp4", title:"El regreso de La Familia Peluche — Día 5", description:"El quinto capítulo de la serie.", type:"series"},
+ {file:"Día 6, Videos Sentimentales- El Regreso De la Familia Peluche.mp4", title:"El regreso de La Familia Peluche — Día 6", description:"El sexto capítulo de la serie.", type:"series"},
+ {file:"Día 7, Videos Sentimentales- El Regresar De la Familia Peluche .mp4", title:"El regreso de La Familia Peluche — Día 7", description:"El séptimo capítulo de la serie.", type:"series"},
+ {file:"Día 8, Videos Sentimentales- El regreso de la Familia Peluche.mp4", title:"El regreso de La Familia Peluche — Día 8", description:"El octavo capítulo de la serie.", type:"series"},
+ {file:"Día 9, Videos Sentimentales- El Regresar De la Familia Peluche.mp4", title:"El regreso de La Familia Peluche — Día 9", description:"El noveno capítulo de la serie.", type:"series"},
+ {file:"French Toast y pepito the movie.mp4", title:"French Toast y Pepito", description:"French Toast y Pepito se unen en una nueva aventura.", type:"movie"},
+ {file:"pepitothemovie.mp4", title:"Pepito: La película", description:"Una nueva aventura protagonizada por Pepito.", type:"movie"}
 ];
 
-/* =========================
-   ELEMENTS
-========================= */
+/* ===== ELEMENTOS ===== */
+const $ = id => document.getElementById(id);
+const loading=$("loading"), app=$("app"), errorBox=$("errorBox");
+const searchInput=$("searchInput");
+const detailModal=$("detailModal"), detailVideo=$("detailVideo");
+const playerModal=$("playerModal"), playerVideo=$("playerVideo");
 
-const loading =
-    document.getElementById("loading");
+const url = f => encodeURI(f);
+const normalize = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const typeLabel = t => t==="series" ? "Serie" : "Película";
 
-const app =
-    document.getElementById("app");
-
-const errorBox =
-    document.getElementById("errorBox");
-
-const accountButton =
-    document.getElementById("accountButton");
-
-const accountMenu =
-    document.getElementById("accountMenu");
-
-const accountName =
-    document.getElementById("accountName");
-
-const accountAvatar =
-    document.getElementById("accountAvatar");
-
-const accountDefaultAvatar =
-    document.getElementById("accountDefaultAvatar");
-
-const menuUsername =
-    document.getElementById("menuUsername");
-
-const menuEmail =
-    document.getElementById("menuEmail");
-
-const heroImage =
-    document.getElementById("heroImage");
-
-const heroLabel =
-    document.getElementById("heroLabel");
-
-const heroTitle =
-    document.getElementById("heroTitle");
-
-const heroDescription =
-    document.getElementById("heroDescription");
-
-const heroType =
-    document.getElementById("heroType");
-
-const heroCount =
-    document.getElementById("heroCount");
-
-const seriesGrid =
-    document.getElementById("seriesGrid");
-
-const moviesGrid =
-    document.getElementById("moviesGrid");
-
-const seriesEmpty =
-    document.getElementById("seriesEmpty");
-
-const moviesEmpty =
-    document.getElementById("moviesEmpty");
-
-const seriesCount =
-    document.getElementById("seriesCount");
-
-const moviesCount =
-    document.getElementById("moviesCount");
-
-const searchInput =
-    document.getElementById("searchInput");
-
-const playerModal =
-    document.getElementById("playerModal");
-
-const playerVideo =
-    document.getElementById("playerVideo");
-
-const playerTitle =
-    document.getElementById("playerTitle");
-
-const playerDescription =
-    document.getElementById("playerDescription");
-
-/* =========================
-   ERROR DISPLAY
-========================= */
-
-function showError(message){
-
-    errorBox.textContent = message;
-
-    errorBox.style.display =
-        "block";
-
-    clearTimeout(
-        showError.timer
-    );
-
-    showError.timer =
-        setTimeout(() => {
-
-            errorBox.style.display =
-                "none";
-
-        }, 5000);
+function showError(msg){
+ errorBox.textContent = msg;
+ errorBox.style.display = "block";
+ clearTimeout(showError.t);
+ showError.t = setTimeout(()=>errorBox.style.display="none",5000);
 }
 
-/* =========================
-   ACCOUNT
-========================= */
-
-let currentUser = null;
-
-function getPfpUrl(pfp){
-
-    if(!pfp){
-        return null;
-    }
-
-    if(
-        pfp.startsWith("http://") ||
-        pfp.startsWith("https://")
-    ){
-        return pfp;
-    }
-
-    if(
-        pfp.startsWith("/")
-    ){
-        return AUTH_API + pfp;
-    }
-
-    return AUTH_API + "/" + pfp;
+function fmtDuration(sec){
+ if(!isFinite(sec) || !sec) return "";
+ const m = Math.round(sec/60);
+ return m>=60 ? `${Math.floor(m/60)} h ${m%60} min` : `${m} min`;
 }
 
-function getInitial(username){
-
-    if(!username){
-        return "U";
-    }
-
-    return username
-        .trim()
-        .charAt(0)
-        .toUpperCase();
+/* Coloca un vídeo en el minuto 1 (o al inicio si dura menos) */
+function previewStart(v){
+ return v.duration && v.duration > PREVIEW_START+2 ? PREVIEW_START : 0.5;
+}
+function setPreviewSrc(v,file){
+ v.src = url(file) + "#t=" + PREVIEW_START;
+ v.addEventListener("loadedmetadata",()=>{ v.currentTime = previewStart(v); },{once:true});
 }
 
-function updateAccountUI(user){
-
-    currentUser = user;
-
-    const username =
-        user.username ||
-        user.email?.split("@")[0] ||
-        "user";
-
-    const email =
-        user.email ||
-        username + "@knfoundation.org";
-
-    accountName.textContent =
-        "@" + username;
-
-    menuUsername.textContent =
-        "@" + username;
-
-    menuEmail.textContent =
-        email;
-
-    accountDefaultAvatar.textContent =
-        getInitial(username);
-
-    const pfp =
-        user.pfp ||
-        user.profile_picture ||
-        null;
-
-    const pfpUrl =
-        getPfpUrl(pfp);
-
-    if(pfpUrl){
-
-        accountAvatar.src =
-            pfpUrl;
-
-        accountAvatar.style.display =
-            "block";
-
-        accountDefaultAvatar.style.display =
-            "none";
-
-        accountAvatar.onerror =
-            () => {
-
-                accountAvatar.style.display =
-                    "none";
-
-                accountDefaultAvatar.style.display =
-                    "flex";
-            };
-
-    }else{
-
-        accountAvatar.style.display =
-            "none";
-
-        accountDefaultAvatar.style.display =
-            "flex";
-    }
+/* ===== AUTENTICACIÓN ===== */
+function goAuth(){
+ location.replace(AUTH_PAGE + "?redirect=" + encodeURIComponent(location.href));
 }
 
-/* =========================
-   AUTH
-========================= */
+function failScreen(msg){
+ loading.style.display = "flex";
+ loading.innerHTML = "";
+ const p = document.createElement("div"); p.textContent = msg;
+ const b = document.createElement("button"); b.textContent = "Reintentar"; b.onclick = ()=>location.reload();
+ loading.append(p,b);
+}
 
 async function checkAuth(){
-
-    const token =
-        localStorage.getItem(TOKEN_KEY);
-
-    if(!token){
-
-        redirectToAuth();
-
-        return false;
-    }
-
-    try{
-
-        const response =
-            await fetch(
-                AUTH_API + "/api/me",
-                {
-                    method:"GET",
-                    headers:{
-                        "Authorization":
-                            "Bearer " + token
-                    }
-                }
-            );
-
-        if(!response.ok){
-
-            localStorage.removeItem(
-                TOKEN_KEY
-            );
-
-            redirectToAuth();
-
-            return false;
-        }
-
-        const user =
-            await response.json();
-
-        updateAccountUI(user);
-
-        return true;
-
-    }catch(error){
-
-        showError(
-            "Unable to connect to Kn Foundation."
-        );
-
-        redirectToAuth();
-
-        return false;
-    }
+ const token = localStorage.getItem(TOKEN_KEY);
+ if(!token){ goAuth(); return false; }
+ const ctrl = new AbortController();
+ const timer = setTimeout(()=>ctrl.abort(),8000);
+ try{
+  const r = await fetch(AUTH_API+"/api/me",{headers:{Authorization:"Bearer "+token},signal:ctrl.signal});
+  if(r.status===401){ localStorage.removeItem(TOKEN_KEY); goAuth(); return false; }
+  if(!r.ok){ failScreen("El servidor de cuentas no responde."); return false; }
+  return true;
+ }catch(e){
+  failScreen("No se pudo conectar con Kn Foundation.");
+  return false;
+ }finally{ clearTimeout(timer); }
 }
 
-/* =========================
-   AUTH REDIRECT
-========================= */
-
-function redirectToAuth(){
-
-    const returnUrl =
-        window.location.href;
-
-    const url =
-        AUTH_PAGE +
-        "?redirect=" +
-        encodeURIComponent(returnUrl);
-
-    window.location.replace(
-        url
-    );
-}
-
-/* =========================
-   LOGOUT
-========================= */
-
-async function logout(){
-
-    const token =
-        localStorage.getItem(
-            TOKEN_KEY
-        );
-
-    try{
-
-        if(token){
-
-            await fetch(
-                AUTH_API + "/api/logout",
-                {
-                    method:"POST",
-                    headers:{
-                        "Authorization":
-                            "Bearer " + token
-                    }
-                }
-            );
-        }
-
-    }catch(error){
-        /* Continue local logout anyway */
-    }
-
-    localStorage.removeItem(
-        TOKEN_KEY
-    );
-
-    window.location.href =
-    AUTH_PAGE +
-    "?redirect=" +
-    encodeURIComponent(
-        window.location.href
-    );
-}
-
-/* =========================
-   ACCOUNT MENU
-========================= */
-
-accountButton.addEventListener(
-    "click",
-    event => {
-
-        event.stopPropagation();
-
-        accountMenu.classList.toggle(
-            "open"
-        );
-    }
-);
-
-accountMenu.addEventListener(
-    "click",
-    event => {
-        event.stopPropagation();
-    }
-);
-
-document.addEventListener(
-    "click",
-    () => {
-
-        accountMenu.classList.remove(
-            "open"
-        );
-    }
-);
-
-document
-    .getElementById("logoutButton")
-    .addEventListener(
-        "click",
-        logout
-    );
-
-document
-    .getElementById("accountSettings")
-    .addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                ACCOUNT_PAGE;
-        }
-    );
-
-/* =========================
-   BANNERS
-========================= */
-
+/* ===== BANNERS ===== */
 let currentBanner = 0;
-
 function renderBanner(){
-
-    const banner =
-        banners[currentBanner];
-
-    heroImage.src =
-        banner.image;
-
-    heroImage.alt =
-        banner.title;
-
-    heroLabel.textContent =
-        banner.type;
-
-    heroTitle.textContent =
-        banner.title;
-
-    heroDescription.textContent =
-        banner.description;
-
-    heroType.textContent =
-        banner.type;
-
-    heroCount.textContent =
-        banner.count;
+ const b = banners[currentBanner];
+ $("heroImage").src = b.image;
+ $("heroTitle").textContent = b.title;
+ $("heroDescription").textContent = b.description;
+ $("heroType").textContent = b.type;
+ $("heroCount").textContent = b.type==="Serie"
+  ? titles.filter(t=>t.type==="series").length + " episodios"
+  : "Película destacada";
 }
-
-/*
-   Banner changes automatically only.
-   There are no manual controls.
-*/
-
+$("heroButton").addEventListener("click",()=>{
+ const item = titles.find(t=>t.file===banners[currentBanner].file);
+ if(item) openDetail(item);
+});
 renderBanner();
+setInterval(()=>{ currentBanner=(currentBanner+1)%banners.length; renderBanner(); },5000);
 
-setInterval(
-    () => {
-
-        currentBanner =
-            (currentBanner + 1) %
-            banners.length;
-
-        renderBanner();
-
-    },
-    5000
-);
-
-/* =========================
-   CARDS
-========================= */
-
+/* ===== TARJETAS ===== */
 function createCard(item){
+ const card = document.createElement("button");
+ card.type = "button";
+ card.className = "card";
 
-    const card =
-        document.createElement("article");
+ const preview = document.createElement("div");
+ preview.className = "card-preview";
 
-    card.className =
-        "card";
+ const video = document.createElement("video");
+ video.muted = true; video.preload = "metadata"; video.playsInline = true;
+ setPreviewSrc(video,item.file);
+ video.addEventListener("error",()=>{
+  video.remove();
+  const ph = document.createElement("div");
+  ph.className = "card-placeholder";
+  ph.textContent = "Vista previa no disponible";
+  preview.prepend(ph);
+ },{once:true});
 
-    const preview =
-        document.createElement("div");
+ card.addEventListener("mouseenter",()=>video.play().catch(()=>{}));
+ card.addEventListener("mouseleave",()=>{ video.pause(); video.currentTime = previewStart(video); });
 
-    preview.className =
-        "card-preview";
+ const type = document.createElement("div");
+ type.className = "card-type";
+ type.textContent = typeLabel(item.type);
+ preview.append(video,type);
 
-    const video =
-        document.createElement("video");
+ const body = document.createElement("div");
+ body.className = "card-body";
+ const h = document.createElement("h3"); h.className="card-title"; h.textContent=item.title;
+ const d = document.createElement("div"); d.className="card-description"; d.textContent=item.description;
+ body.append(h,d);
 
-    video.src =
-        item.file;
-
-    video.muted =
-        true;
-
-    video.preload =
-        "metadata";
-
-    video.playsInline =
-        true;
-
-    video.addEventListener(
-        "mouseenter",
-        () => {
-
-            video.play()
-                .catch(() => {});
-        }
-    );
-
-    video.addEventListener(
-        "mouseleave",
-        () => {
-
-            video.pause();
-
-            video.currentTime =
-                0;
-        }
-    );
-
-    video.addEventListener(
-        "error",
-        () => {
-
-            video.remove();
-
-            const placeholder =
-                document.createElement("div");
-
-            placeholder.className =
-                "card-placeholder";
-
-            placeholder.textContent =
-                "Preview unavailable";
-
-            preview.prepend(
-                placeholder
-            );
-
-        },
-        {
-            once:true
-        }
-    );
-
-    const type =
-        document.createElement("div");
-
-    type.className =
-        "card-type";
-
-    type.textContent =
-        item.type === "series"
-            ? "Series"
-            : "Movie";
-
-    preview.appendChild(
-        video
-    );
-
-    preview.appendChild(
-        type
-    );
-
-    const body =
-        document.createElement("div");
-
-    body.className =
-        "card-body";
-
-    const title =
-        document.createElement("h3");
-
-    title.className =
-        "card-title";
-
-    title.textContent =
-        item.title;
-
-    const description =
-        document.createElement("div");
-
-    description.className =
-        "card-description";
-
-    description.textContent =
-        item.description;
-
-    body.appendChild(
-        title
-    );
-
-    body.appendChild(
-        description
-    );
-
-    card.appendChild(
-        preview
-    );
-
-    card.appendChild(
-        body
-    );
-
-    card.addEventListener(
-        "click",
-        () => {
-
-            openPlayer(item);
-        }
-    );
-
-    return card;
+ card.append(preview,body);
+ card.addEventListener("click",()=>openDetail(item));
+ return card;
 }
-
-/* =========================
-   RENDER TITLES
-========================= */
 
 function renderTitles(){
+ const q = normalize(searchInput.value.trim());
+ const filtered = titles.filter(i => normalize(i.title).includes(q) || normalize(i.description).includes(q));
+ const series = filtered.filter(i=>i.type==="series");
+ const movies = filtered.filter(i=>i.type==="movie");
 
-    const query =
-        searchInput.value
-            .trim()
-            .toLowerCase();
+ $("seriesGrid").replaceChildren(...series.map(createCard));
+ $("moviesGrid").replaceChildren(...movies.map(createCard));
 
-    const filtered =
-        titles.filter(item => {
+ $("seriesCount").textContent = `${series.length} ${series.length===1?"título":"títulos"}`;
+ $("moviesCount").textContent = `${movies.length} ${movies.length===1?"título":"títulos"}`;
+ $("seriesEmpty").style.display = series.length ? "none" : "block";
+ $("moviesEmpty").style.display = movies.length ? "none" : "block";
+}
+searchInput.addEventListener("input",renderTitles);
 
-            return (
-                item.title
-                    .toLowerCase()
-                    .includes(query)
+/* ===== DETALLE ===== */
+let currentItem = null;
 
-                ||
+function openDetail(item){
+ currentItem = item;
+ $("detailTitle").textContent = item.title;
+ $("detailDescription").textContent = item.description;
+ $("detailType").textContent = typeLabel(item.type);
+ $("detailDuration").textContent = "";
 
-                item.description
-                    .toLowerCase()
-                    .includes(query)
-            );
-        });
+ setPreviewSrc(detailVideo,item.file);
+ detailVideo.addEventListener("loadedmetadata",()=>{
+  $("detailDuration").textContent = fmtDuration(detailVideo.duration);
+ },{once:true});
+ detailVideo.play().catch(()=>{});
 
-    const series =
-        filtered.filter(
-            item =>
-                item.type === "series"
-        );
+ const eps = $("episodes");
+ if(item.type==="series"){
+  eps.style.display = "block";
+  $("epList").replaceChildren(...titles.filter(t=>t.type==="series").map(t=>{
+   const b = document.createElement("button");
+   b.type = "button";
+   b.className = "ep" + (t===item ? " current" : "");
+   b.textContent = t.title;
+   b.addEventListener("click",()=>openDetail(t));
+   return b;
+  }));
+ }else{
+  eps.style.display = "none";
+ }
 
-    const movies =
-        filtered.filter(
-            item =>
-                item.type === "movie"
-        );
-
-    seriesGrid.innerHTML =
-        "";
-
-    moviesGrid.innerHTML =
-        "";
-
-    series.forEach(
-        item => {
-
-            seriesGrid.appendChild(
-                createCard(item)
-            );
-        }
-    );
-
-    movies.forEach(
-        item => {
-
-            moviesGrid.appendChild(
-                createCard(item)
-            );
-        }
-    );
-
-    seriesCount.textContent =
-        `${series.length} title${series.length === 1 ? "" : "s"}`;
-
-    moviesCount.textContent =
-        `${movies.length} title${movies.length === 1 ? "" : "s"}`;
-
-    seriesEmpty.style.display =
-        series.length === 0
-            ? "block"
-            : "none";
-
-    moviesEmpty.style.display =
-        movies.length === 0
-            ? "block"
-            : "none";
+ detailModal.classList.add("open");
+ document.body.style.overflow = "hidden";
+ $("watchButton").focus();
 }
 
-searchInput.addEventListener(
-    "input",
-    renderTitles
-);
+function closeDetail(){
+ detailVideo.pause();
+ detailVideo.removeAttribute("src");
+ detailVideo.load();
+ detailModal.classList.remove("open");
+ document.body.style.overflow = "";
+}
 
-/* =========================
-   PLAYER
-========================= */
+$("closeDetail").addEventListener("click",closeDetail);
+$("backButton").addEventListener("click",closeDetail);
+detailModal.addEventListener("click",e=>{ if(e.target===detailModal) closeDetail(); });
+$("watchButton").addEventListener("click",()=>{ if(currentItem) openPlayer(currentItem); });
 
+/* ===== REPRODUCTOR ===== */
 function openPlayer(item){
-
-    playerTitle.textContent =
-        item.title;
-
-    playerDescription.textContent =
-        item.description;
-
-    playerVideo.src =
-        item.file;
-
-    playerModal.classList.add(
-        "open"
-    );
-
-    playerVideo.play()
-        .catch(() => {});
+ detailVideo.pause();
+ $("playerTitle").textContent = item.title;
+ playerVideo.src = url(item.file);
+ playerModal.classList.add("open");
+ playerVideo.play().catch(()=>{});
 }
 
 function closePlayer(){
-
-    playerVideo.pause();
-
-    playerVideo.removeAttribute(
-        "src"
-    );
-
-    playerVideo.load();
-
-    playerModal.classList.remove(
-        "open"
-    );
+ playerVideo.pause();
+ playerVideo.removeAttribute("src");
+ playerVideo.load();
+ playerModal.classList.remove("open");
+ if(detailModal.classList.contains("open")) detailVideo.play().catch(()=>{});
 }
 
-document
-    .getElementById("closePlayer")
-    .addEventListener(
-        "click",
-        closePlayer
-    );
+playerVideo.addEventListener("error",()=>{
+ if(playerVideo.getAttribute("src")) showError("No se pudo cargar el vídeo.");
+});
+$("closePlayer").addEventListener("click",closePlayer);
+playerModal.addEventListener("click",e=>{ if(e.target===playerModal) closePlayer(); });
 
-playerModal.addEventListener(
-    "click",
-    event => {
+document.addEventListener("keydown",e=>{
+ if(e.key!=="Escape") return;
+ if(playerModal.classList.contains("open")) closePlayer();
+ else if(detailModal.classList.contains("open")) closeDetail();
+});
 
-        if(
-            event.target ===
-            playerModal
-        ){
-
-            closePlayer();
-        }
-    }
-);
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if(event.key === "Escape"){
-
-            closePlayer();
-
-            accountMenu.classList.remove(
-                "open"
-            );
-        }
-    }
-);
-
-/* =========================
-   START
-========================= */
-
+/* ===== INICIO ===== */
 async function start(){
-
-    renderTitles();
-
-    const authenticated =
-        await checkAuth();
-
-    if(!authenticated){
-        return;
-    }
-
-    loading.style.display =
-        "none";
-
-    app.style.display =
-        "block";
+ if(!(await checkAuth())) return;
+ renderTitles();
+ loading.style.display = "none";
+ app.style.display = "block";
 }
-
 start();
 </script>
-<script src="./smart-lock.js"></script
+<script src="./smart-lock.js"></script>
 </body>
 </html>
